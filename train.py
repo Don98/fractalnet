@@ -43,9 +43,9 @@ def main(args=None):
             raise ValueError('Must provide --coco_path when training on COCO,')
 
         dataset_train = CocoDataset(parser.coco_path, set_name='train2017',
-                                    transform=transforms.Compose([Normalizer(), Augmenter(), Resizer([460,640])]),part = 1)
+                                    transform=transforms.Compose([Normalizer(), Augmenter(), Resizer([460,640])]))
         dataset_val = CocoDataset(parser.coco_path, set_name='val2017',
-                                  transform=transforms.Compose([Normalizer(), Resizer([460,640])]),part = 1)
+                                  transform=transforms.Compose([Normalizer(), Resizer([460,640])]))
                                   # transform=transforms.Compose([Normalizer(), Resizer([350,500])]),part = 1)
 
     elif parser.dataset == 'csv':
@@ -88,16 +88,6 @@ def main(args=None):
     # Create the model
     if parser.depth == 0:
         cnn3 = fractalnet.Fractalnet(num_classes=dataset_train.num_classes(), pretrained=True)
-    elif parser.depth == 18:
-        cnn3 = model.resnet34(num_classes=dataset_train.num_classes(), pretrained=True)
-    elif parser.depth == 34:
-        cnn3 = model.resnet34(num_classes=dataset_train.num_classes(), pretrained=True)
-    elif parser.depth == 50:
-        cnn3 = model.resnet50(num_classes=dataset_train.num_classes(), pretrained=True)
-    elif parser.depth == 101:
-        cnn3 = model.resnet101(num_classes=dataset_train.num_classes(), pretrained=True)
-    elif parser.depth == 152:
-        cnn3 = model.resnet152(num_classes=dataset_train.num_classes(), pretrained=True)
     else:
         raise ValueError('Unsupported model depth, must be one of 18, 34, 50, 101, 152')
     
