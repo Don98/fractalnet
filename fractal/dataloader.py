@@ -539,13 +539,13 @@ class Augmenter(object):
 
             rows, cols, channels = image.shape
 
-            x1 = annots[:, 0].copy()
-            x2 = annots[:, 2].copy()
+            x1 = annots['boxes'][:, 0].copy()
+            x2 = annots['boxes'][:, 2].copy()
             
             x_tmp = x1.copy()
 
-            annots[:, 0] = cols - x2
-            annots[:, 2] = cols - x_tmp
+            annots['boxes'][:, 0] = cols - x2
+            annots['boxes'][:, 2] = cols - x_tmp
 
             sample = {'img': image, 'annot': annots}
 
