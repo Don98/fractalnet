@@ -9,9 +9,10 @@ from fractal import losses
 
 class FractalNet(nn.Module):
 
-    def __init__(self, num_classes, block, bigblock):
+    def __init__(self, num_classes, block, bigblock,istrain=True):
         self.inplanes = 64
         self.drop_ratio = 0
+        self.training = istrain
         if self.training:
             self.drop_ratio = 0.3
         super(FractalNet, self).__init__()
@@ -88,12 +89,12 @@ class FractalNet(nn.Module):
         return x4
 
 
-def Fractalnet(num_classes, pretrained=False, **kwargs):
+def Fractalnet(num_classes, pretrained=False, istrain = True,**kwargs):
     """Constructs a ResNet-18 model.
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
     """
-    model = FractalNet(num_classes, BasicBlock, BigBlock, **kwargs)
+    model = FractalNet(num_classes, BasicBlock, BigBlock,istrain, **kwargs)
     if pretrained:
         model.load_state_dict(model_zoo.load_url(model_urls['resnet18'], model_dir='.'), strict=False)
     return model

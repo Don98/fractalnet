@@ -88,7 +88,7 @@ def main(args=None):
     
     # Create the model
     if parser.depth == 0:
-        cnn3 = fractalnet.Fractalnet(num_classes=dataset_train.num_classes(), pretrained=True)
+        cnn3 = fractalnet.Fractalnet(num_classes=dataset_train.num_classes(), pretrained=True,istrain=True)
     else:
         raise ValueError('Unsupported model depth, must be one of 18, 34, 50, 101, 152')
     
