@@ -87,7 +87,7 @@ def Fractalnet(num_classes, pretrained=False, istrain = True,**kwargs):
         pretrained (bool): If True, returns a model pre-trained on ImageNet
     """
     model = FractalNet(num_classes, BasicBlock, BigBlock,istrain, **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet18'], model_dir='.'), strict=False)
+    # if pretrained:
+        # model.load_state_dict(model_zoo.load_url(model_urls['resnet18'], model_dir='.'), strict=False)
     return model
 
