@@ -83,8 +83,7 @@ class CocoDataset(Dataset):
     def load_annotations(self, image_index):
         # get ground truth annotations
         annotations_ids = self.coco.getAnnIds(imgIds=self.image_ids[image_index], iscrowd=False)
-        annotations     = np.zeros((0, 4))
-        labels          = np.zeros((0, 1))
+        annotations     = np.zeros((0, 5))
 
         # some images appear to miss annotations (like image with id 257034)
         if len(annotations_ids) == 0:
@@ -98,20 +97,16 @@ class CocoDataset(Dataset):
             if a['bbox'][2] < 1 or a['bbox'][3] < 1:
                 continue
 
-            annotation        = np.zeros((1, 4))
-            label             = np.zeros((1, 1))
+            annotation        = np.zeros((1, 5))
             annotation[0, :4] = a['bbox']
-            label[0,0]             = self.coco_label_to_label(a['category_id'])
+            annotation[0, 4]  = self.coco_label_to_label(a['category_id'])
             annotations       = np.append(annotations, annotation, axis=0)
-            labels            = np.append(labels     , label     , axis=0)
 
         # transform from [x, y, w, h] to [x1, y1, x2, y2]
         annotations[:, 2] = annotations[:, 0] + annotations[:, 2]
         annotations[:, 3] = annotations[:, 1] + annotations[:, 3]
-        
-        annot = {"boxes":annotations,"labels":labels}
-        
-        return annot
+
+        return annotations
 
     def coco_label_to_label(self, coco_label):
         return self.coco_labels_inverse[coco_label]
@@ -447,9 +442,8 @@ class CSVDataset(Dataset):
 def collater(data):
 
     imgs = [s['img'] for s in data]
-    annots = [s['annot']['boxes']  for s in data]
-    labels = [s['annot']['labels'] for s in data]
-    scales = [s['scale']           for s in data]
+    annots = [s['annot'] for s in data]
+    scales = [s['scale'] for s in data]
         
     widths = [int(s.shape[0]) for s in imgs]
     heights = [int(s.shape[1]) for s in imgs]
@@ -468,7 +462,7 @@ def collater(data):
     
     if max_num_annots > 0:
 
-        annot_padded = torch.ones((len(annots), max_num_annots, 4)) * -1
+        annot_padded = torch.ones((len(annots), max_num_annots, 5)) * -1
 
         if max_num_annots > 0:
             for idx, annot in enumerate(annots):
@@ -476,14 +470,12 @@ def collater(data):
                 if annot.shape[0] > 0:
                     annot_padded[idx, :annot.shape[0], :] = annot
     else:
-        annot_padded = torch.ones((len(annots), 1, 4)) * -1
+        annot_padded = torch.ones((len(annots), 1, 5)) * -1
 
-    
+
     padded_imgs = padded_imgs.permute(0, 3, 1, 2)
-    
-    final_annot = {"boxes":annot_padded,"labels":labels}
-    
-    return {'img': padded_imgs, 'annot': final_annot, 'scale': scales}
+
+    return {'img': padded_imgs, 'annot': annot_padded, 'scale': scales}
 
 class Resizer(object):
     """Convert ndarrays in sample to Tensors."""
@@ -521,11 +513,9 @@ class Resizer(object):
         new_image = np.zeros((rows + pad_w, cols + pad_h, cns)).astype(np.float32)
         new_image[:rows, :cols, :] = image.astype(np.float32)
 
-        annots["boxes"][:, :4] *= scale
-        annots["boxes"] = torch.from_numpy(annots["boxes"])
-        annots["labels"] = torch.from_numpy(annots["labels"])
+        annots[:, :4] *= scale
 
-        return {'img': torch.from_numpy(new_image), 'annot': annots, 'scale': scale}
+        return {'img': torch.from_numpy(new_image), 'annot': torch.from_numpy(annots), 'scale': scale}
 
 
 class Augmenter(object):
@@ -539,13 +529,13 @@ class Augmenter(object):
 
             rows, cols, channels = image.shape
 
-            x1 = annots['boxes'][:, 0].copy()
-            x2 = annots['boxes'][:, 2].copy()
+            x1 = annots[:, 0].copy()
+            x2 = annots[:, 2].copy()
             
             x_tmp = x1.copy()
 
-            annots['boxes'][:, 0] = cols - x2
-            annots['boxes'][:, 2] = cols - x_tmp
+            annots[:, 0] = cols - x2
+            annots[:, 2] = cols - x_tmp
 
             sample = {'img': image, 'annot': annots}
 
