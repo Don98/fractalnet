@@ -27,7 +27,7 @@ class FractalNet(nn.Module):
         self.the_block2 = self._make_the_block(bigblock, inplanes = 128, planes = 256)
         self.the_block3 = self._make_the_block(bigblock, inplanes = 256, planes = 512)
         self.the_block4 = self._make_the_block(bigblock, inplanes = 512, planes = 1024,last_one=True)
-        
+        self.out_channels = 1024
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
