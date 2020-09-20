@@ -35,14 +35,6 @@ class FractalNet(nn.Module):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
 
-        prior = 0.01
-
-        self.classificationModel.output.weight.data.fill_(0)
-        self.classificationModel.output.bias.data.fill_(-math.log((1.0 - prior) / prior))
-
-        self.regressionModel.output.weight.data.fill_(0)
-        self.regressionModel.output.bias.data.fill_(0)
-
         self.freeze_bn()
 
     def _make_the_block(self, bigblock, inplanes, planes, last_one=False):
