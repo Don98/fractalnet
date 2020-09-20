@@ -6,6 +6,7 @@ from torchvision.ops import nms
 from fractal.utils import BasicBlock, BigBlock, Bottleneck, BBoxTransform, ClipBoxes
 from fractal.anchors import Anchors
 from fractal import losses
+from torchvision.models.detection import FasterRCNN
 
 class FractalNet(nn.Module):
 
