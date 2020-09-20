@@ -1,0 +1,100 @@
+import torch.nn as nn
+import torch
+import math
+import torch.utils.model_zoo as model_zoo
+from torchvision.ops import nms
+from fractal.utils import BasicBlock, BigBlock, Bottleneck, BBoxTransform, ClipBoxes
+from fractal.anchors import Anchors
+from fractal import losses
+
+class FractalNet(nn.Module):
+
+    def __init__(self, num_classes, block, bigblock):
+        self.inplanes = 64
+        self.drop_ratio = 0
+        if self.training:
+            self.drop_ratio = 0.3
+        super(FractalNet, self).__init__()
+        self.convH_0 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.drop1 = nn.Dropout(self.drop_ratio)
+        self.relu = nn.ReLU(inplace=True)
+        self.bn1 = nn.BatchNorm2d(64)
+        self.maxpoolH_0 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        
+        self.the_block1 = self._make_the_block(bigblock, inplanes = 64, planes = 128)
+        self.the_block2 = self._make_the_block(bigblock, inplanes = 128, planes = 256)
+        self.the_block3 = self._make_the_block(bigblock, inplanes = 256, planes = 512)
+        self.the_block4 = self._make_the_block(bigblock, inplanes = 512, planes = 1024,last_one=True)
+        
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
+                m.weight.data.normal_(0, math.sqrt(2. / n))
+            elif isinstance(m, nn.BatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
+
+        prior = 0.01
+
+        self.classificationModel.output.weight.data.fill_(0)
+        self.classificationModel.output.bias.data.fill_(-math.log((1.0 - prior) / prior))
+
+        self.regressionModel.output.weight.data.fill_(0)
+        self.regressionModel.output.bias.data.fill_(0)
+
+        self.freeze_bn()
+
+    def _make_the_block(self, bigblock, inplanes, planes, last_one=False):
+        layers = [bigblock((self, inplanes, planes, stride=1, kernel_size = 3, padding=1, drop_ratio=0.3,last_one = last_one)]
+        return nn.Sequential(*layers)
+
+    def freeze_bn(self):
+        '''Freeze BatchNorm layers.'''
+        for layer in self.modules():
+            if isinstance(layer, nn.BatchNorm2d):
+                layer.eval()
+
+    def forward(self, inputs):
+
+        self.convH_0 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.drop1 = nn.Dropout(self.drop_ratio)
+        self.relu = nn.ReLU(inplace=True)
+        self.bn1 = nn.BatchNorm2d(64)
+        self.maxpoolH_0 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        self.maxpool0_4 = nn.MaxPool2d(kernel_size=7, stride=7, padding=1)
+        
+        self.the_block1 = self._make_the_block1(bigblock, inplanes = 64, planes = 128)
+        self.the_block2 = self._make_the_block1(bigblock, inplanes = 128, planes = 256)
+        self.the_block3 = self._make_the_block1(bigblock, inplanes = 256, planes = 512)
+        self.the_block4 = self._make_the_block1(bigblock, inplanes = 512, planes = 1024,last_one = True)
+        
+
+        if self.training:
+            img_batch, annotations = inputs
+        else:
+            img_batch = inputs
+            
+        x = self.convH_0(img_batch)
+        x = self.drop1(x)
+        x = self.relu(x)
+        x = self.bn1(x)
+        x = self.maxpoolH_0(x)
+
+        x1 = self.the_block1(x)
+        x2 = self.the_block2(x1)
+        x3 = self.the_block3(x2)
+        x4 = self.the_block4(x3)
+        
+        return x4
+
+
+def Fractalnet(num_classes, pretrained=False, **kwargs):
+    """Constructs a ResNet-18 model.
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    """
+    model = FractalNet(num_classes, BasicBlock, BigBlock, **kwargs)
+    if pretrained:
+        model.load_state_dict(model_zoo.load_url(model_urls['resnet18'], model_dir='.'), strict=False)
+    return model
+
