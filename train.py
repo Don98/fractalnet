@@ -15,7 +15,8 @@ from torch.utils.data import DataLoader
 
 from fractal import coco_eval
 from fractal import csv_eval
-
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "5"
 assert torch.__version__.split('.')[0] == '1'
 
 print('CUDA available: {}'.format(torch.cuda.is_available()))
