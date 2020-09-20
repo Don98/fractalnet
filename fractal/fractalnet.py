@@ -78,6 +78,7 @@ class FractalNet(nn.Module):
         x3 = self.the_block3(x2)
         x4 = self.the_block4(x3)
         
+        
         return x4
 
 
@@ -86,7 +87,8 @@ def Fractalnet(num_classes, pretrained=False, istrain = True,**kwargs):
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
     """
-    model = FractalNet(num_classes, BasicBlock, BigBlock,istrain, **kwargs)
+    backbone = FractalNet(num_classes, BasicBlock, BigBlock,istrain, **kwargs)
+    model = FasterRCNN(backbone,num_classes=2)
     # if pretrained:
         # model.load_state_dict(model_zoo.load_url(model_urls['resnet18'], model_dir='.'), strict=False)
     return model
