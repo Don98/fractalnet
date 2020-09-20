@@ -119,7 +119,7 @@ def main(args=None):
     for epoch_num in range(parser.epochs):
 
         cnn3.train()
-        cnn3.module.freeze_bn()
+        # cnn3.module.freeze_bn()
 
         epoch_loss = []
 

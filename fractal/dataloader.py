@@ -84,6 +84,7 @@ class CocoDataset(Dataset):
         # get ground truth annotations
         annotations_ids = self.coco.getAnnIds(imgIds=self.image_ids[image_index], iscrowd=False)
         annotations     = np.zeros((0, 5))
+        labels          = np.zeros((0, 1))
 
         # some images appear to miss annotations (like image with id 257034)
         if len(annotations_ids) == 0:
@@ -97,16 +98,20 @@ class CocoDataset(Dataset):
             if a['bbox'][2] < 1 or a['bbox'][3] < 1:
                 continue
 
-            annotation        = np.zeros((1, 5))
+            annotation        = np.zeros((1, 4))
+            label             = np.zeros((1, 1))
             annotation[0, :4] = a['bbox']
-            annotation[0, 4]  = self.coco_label_to_label(a['category_id'])
+            label             = self.coco_label_to_label(a['category_id'])
             annotations       = np.append(annotations, annotation, axis=0)
+            labels            = np.append(labels     , label     , axis=0)
 
         # transform from [x, y, w, h] to [x1, y1, x2, y2]
         annotations[:, 2] = annotations[:, 0] + annotations[:, 2]
         annotations[:, 3] = annotations[:, 1] + annotations[:, 3]
-
-        return annotations
+        
+        annot = {"boxes":annotations,"labels":labels}
+        
+        return annot
 
     def coco_label_to_label(self, coco_label):
         return self.coco_labels_inverse[coco_label]
