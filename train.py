@@ -112,7 +112,7 @@ def main(args=None):
     loss_hist = collections.deque(maxlen=500)
     
     cnn3.train()
-    cnn3.module.freeze_bn()
+    # cnn3.module.freeze_bn()
 
     print('Num training images: {}'.format(len(dataset_train)))
     
