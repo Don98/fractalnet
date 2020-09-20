@@ -447,8 +447,9 @@ class CSVDataset(Dataset):
 def collater(data):
 
     imgs = [s['img'] for s in data]
-    annots = [s['annot'] for s in data]
-    scales = [s['scale'] for s in data]
+    annots = [s['annot']['boxes']  for s in data]
+    labels = [s['annot']['labels'] for s in data]
+    scales = [s['scale']           for s in data]
         
     widths = [int(s.shape[0]) for s in imgs]
     heights = [int(s.shape[1]) for s in imgs]
@@ -467,7 +468,7 @@ def collater(data):
     
     if max_num_annots > 0:
 
-        annot_padded = torch.ones((len(annots), max_num_annots, 5)) * -1
+        annot_padded = torch.ones((len(annots), max_num_annots, 4)) * -1
 
         if max_num_annots > 0:
             for idx, annot in enumerate(annots):
@@ -475,12 +476,14 @@ def collater(data):
                 if annot.shape[0] > 0:
                     annot_padded[idx, :annot.shape[0], :] = annot
     else:
-        annot_padded = torch.ones((len(annots), 1, 5)) * -1
+        annot_padded = torch.ones((len(annots), 1, 4)) * -1
 
-
+    
     padded_imgs = padded_imgs.permute(0, 3, 1, 2)
-
-    return {'img': padded_imgs, 'annot': annot_padded, 'scale': scales}
+    
+    final_annot = {"boxes":annot_padded,"labels":labels}
+    
+    return {'img': padded_imgs, 'annot': final_annot, 'scale': scales}
 
 class Resizer(object):
     """Convert ndarrays in sample to Tensors."""
