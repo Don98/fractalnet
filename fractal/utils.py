@@ -12,7 +12,7 @@ def conv3x3(in_planes, out_planes, stride=1,kernel_size=3,padding=1):
 class BasicBlock(nn.Module):
     expansion = 1
 
-    def __init__(self, inplanes, planes, stride=1, downsample=None,kernel_size = 3,padding=1,drop_ratio=0.3):
+    def __init__(self, inplanes, planes, stride=1,kernel_size = 3,padding=1,drop_ratio=0.3):
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride, kernel_size, padding)
         self.drop1 = nn.Dropout(drop_ratio)
@@ -32,31 +32,31 @@ class BasicBlock(nn.Module):
 
 class BigBlock(nn.Module):
 
-    def __init__(self, inplanes, planes, stride=1, kernel_size = 3, padding=1, drop_ratio=0.3,last_one = False):
+    def __init__(self, inplanes, planes, stride = 1, kernel_size = 3, padding=1, drop_ratio=0.3,last_one = False):
         super(BasicBlock, self).__init__()
         #第一列
-        self.con0_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding, drop_ratio)
+        self.con0_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         
         #最上面一块        
-        self.con2_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding, drop_ratio)
-        self.con3_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding, drop_ratio)
-        self.con3_1 = BasicBlock(planes, planes, stride, kernel_size = 3, padding, drop_ratio)
+        self.con2_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.con3_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.con3_1 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         
         #第二块
-        self.con2_1 = BasicBlock(planes, planes, stride, kernel_size = 3, padding, drop_ratio)
-        self.con3_2 = BasicBlock(planes, planes, stride, kernel_size = 3, padding, drop_ratio)
-        self.con3_3 = BasicBlock(planes, planes, stride, kernel_size = 3, padding, drop_ratio)
-        self.con1_1 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding, drop_ratio)
+        self.con2_1 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.con3_2 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.con3_3 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.con1_1 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
                 
         #第三块
-        self.con2_2 = BasicBlock(planes, planes, stride, kernel_size = 3, padding, drop_ratio)
-        self.con3_4 = BasicBlock(planes, planes, stride, kernel_size = 3, padding, drop_ratio)
-        self.con3_5 = BasicBlock(planes, planes, stride, kernel_size = 3, padding, drop_ratio)
+        self.con2_2 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.con3_4 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.con3_5 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
       
         #第四块
-        self.con2_3 = BasicBlock(planes, planes, stride, kernel_size = 3, padding, drop_ratio)
-        self.con3_6 = BasicBlock(planes, planes, stride, kernel_size = 3, padding, drop_ratio)
-        self.con3_7 = BasicBlock(planes, planes, stride, kernel_size = 3, padding, drop_ratio)
+        self.con2_3 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.con3_6 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.con3_7 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
       
         self.maxpool  = nn.MaxPool2d(kernel_size=2, stride=2, padding=1)
         self.maxpool1 = nn.MaxPool2d(kernel_size=7, stride=7, padding=1)

@@ -45,7 +45,7 @@ class FractalNet(nn.Module):
         self.freeze_bn()
 
     def _make_the_block(self, bigblock, inplanes, planes, last_one=False):
-        layers = [bigblock((self, inplanes, planes, stride=1, kernel_size = 3, padding=1, drop_ratio=0.3,last_one = last_one)]
+        layers = [bigblock(inplanes, planes, stride = 1, kernel_size = 3, padding=1, drop_ratio=0.3,last_one = last_one)]
         return nn.Sequential(*layers)
 
     def freeze_bn(self):
