@@ -101,7 +101,7 @@ class CocoDataset(Dataset):
             annotation        = np.zeros((1, 4))
             label             = np.zeros((1, 1))
             annotation[0, :4] = a['bbox']
-            label             = self.coco_label_to_label(a['category_id'])
+            label[0,0]             = self.coco_label_to_label(a['category_id'])
             annotations       = np.append(annotations, annotation, axis=0)
             labels            = np.append(labels     , label     , axis=0)
 
