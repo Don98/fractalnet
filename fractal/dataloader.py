@@ -527,7 +527,12 @@ class Resizer(object):
 
         new_image = np.zeros((rows + pad_w, cols + pad_h, cns)).astype(np.float32)
         new_image[:rows, :cols, :] = image.astype(np.float32)
-        
+        print(annots)
+        print("="*50)
+        print(annots['boxes'])
+        print("="*50)
+        print(annots['boxes'][:,:4])
+        print("-"*50)
         annots['boxes'][:, :4] *= scale
 
         the_annot = {'boxes': torch.from_numpy(annots['boxes']),'labels':annots['labels']}
