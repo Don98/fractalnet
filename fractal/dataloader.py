@@ -464,7 +464,7 @@ def collater(data):
 
     max_num_annots = max(annot['boxes'].shape[0] for annot in annots)
     
-    print(annot)
+    print(annots)
     print("="*100)
     print(max_num_annots)
     print("="*50)
