@@ -464,29 +464,27 @@ def collater(data):
 
     max_num_annots = max(annot['boxes'].shape[0] for annot in annots)
     
+    print(annot)
+    print("="*100)
+    print(max_num_annots)
+    print("="*50)
     if max_num_annots > 0:
-        print(annots)
-        print("="*20)
-        print(annots["boxes"])
-        print("="*20)
-        print(len(annots))
-        print("="*20)
-        print(len(annots["boxes"]))
-        print("="*20)
-        annot_padded = torch.ones((len(annots["boxes"]), max_num_annots, 4)) * -1
-
+        annot_padded = torch.ones((len(annots), max_num_annots, 4)) * -1
         if max_num_annots > 0:
             for idx, annot in enumerate(annots):
                 #print(annot.shape)
                 if annot["boxes"].shape[0] > 0:
                     annot_padded[idx, :annot["boxes"].shape[0], :] = annot["boxes"]
     else:
-        annot_padded = torch.ones((len(annots["boxes"]), 1, 4)) * -1
+        annot_padded = torch.ones((len(annots), 1, 4)) * -1
 
 
     padded_imgs = padded_imgs.permute(0, 3, 1, 2)
 
-    annot = {"img": annot_padded, "labels":annots["labels"]}
+    print("="*50)
+    print(annot_padded.shape)
+    
+    annot = {"boxes": annot_padded, "labels":annots["labels"]}
 
     return {'img': padded_imgs, 'annot': annot, 'scale': scales}
 
