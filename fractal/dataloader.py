@@ -100,6 +100,7 @@ class CocoDataset(Dataset):
                 continue
 
             annotation        = np.zeros((1, 4))
+            label             = np.zeros((1, 1))
             annotation[0, :4] = a['bbox']
             label[0,0]        = self.coco_label_to_label(a['category_id'])
             annotations       = np.append(annotations, annotation, axis=0)
