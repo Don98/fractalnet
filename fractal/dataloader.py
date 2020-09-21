@@ -544,7 +544,7 @@ class Augmenter(object):
             annots['boxes'][:, 2] = cols - x_tmp
 
 
-            sample = {'img': image, 'annot': the_annot}
+            sample = {'img': image, 'annot': annots}
 
         return sample
 
