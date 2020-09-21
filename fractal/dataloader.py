@@ -476,7 +476,7 @@ def collater(data):
                 #print(annot.shape)
                 if annot["boxes"].shape[0] > 0:
                     annot_padded[idx, :annot["boxes"].shape[0], :] = annot["boxes"]
-                    label_padded[idx, :annot["boxes"].shape[0], 0] = annot["labels"]
+                    label_padded[idx, :annot["boxes"].shape[0], :] = annot["labels"]
     else:
         annot_padded = torch.ones((len(annots), 1, 4)) * -1
         label_padded = torch.ones((len(annots), 1, 1)) * -1
@@ -491,9 +491,9 @@ def collater(data):
     print(label_padded)
     print(label_padded.shape)
     
-    annot = {"boxes": annot_padded, "labels":label_padded}
+    the_annot = {"boxes": annot_padded, "labels":label_padded}
 
-    return {'img': padded_imgs, 'annot': annot, 'scale': scales}
+    return {'img': padded_imgs, 'annot': the_annot, 'scale': scales}
 
 class Resizer(object):
     """Convert ndarrays in sample to Tensors."""
