@@ -517,9 +517,11 @@ class Resizer(object):
         new_image = np.zeros((rows + pad_w, cols + pad_h, cns)).astype(np.float32)
         new_image[:rows, :cols, :] = image.astype(np.float32)
 
-        annots[:, :4] *= scale
+        annots['boxes'][:, :4] *= scale
 
-        return {'img': torch.from_numpy(new_image), 'annot': torch.from_numpy(annots), 'scale': scale}
+        the_annot = {'boxes': torch.from_numpy(annots['boxes']),'labels':annots['labels']}
+
+        return {'img': torch.from_numpy(new_image), 'annot': the_annot, 'scale': scale}
 
 
 class Augmenter(object):
