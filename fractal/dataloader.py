@@ -547,7 +547,7 @@ class Augmenter(object):
             rows, cols, channels = image.shape
             print(annots)
             print("="*50)
-            print(annots[:, 0])
+            print(annots['boxes'])
             print("="*50)
             print(annots['boxes'][:, 0])
             print("-"*50)
