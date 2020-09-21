@@ -110,7 +110,8 @@ class CocoDataset(Dataset):
         # transform from [x, y, w, h] to [x1, y1, x2, y2]
         annotations[:, 2] = annotations[:, 0] + annotations[:, 2]
         annotations[:, 3] = annotations[:, 1] + annotations[:, 3]
-
+        print(labels)
+        print("*"*50)
         return {'boxes':annotations,'labels':labels}
 
     def coco_label_to_label(self, coco_label):
