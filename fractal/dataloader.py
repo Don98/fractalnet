@@ -533,10 +533,10 @@ class Resizer(object):
         print("="*50)
         print(annots['boxes'][:,:4])
         annots['boxes'][:, :4] *= scale
-        print("-"*50)
 
         the_annot = {'boxes': torch.from_numpy(annots['boxes']),'labels':annots['labels']}
 
+        print("-"*50)
         return {'img': torch.from_numpy(new_image), 'annot': the_annot, 'scale': scale}
 
 
