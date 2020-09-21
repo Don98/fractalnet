@@ -125,6 +125,7 @@ def main(args=None):
         for iter_num, data in enumerate(dataloader_train):
             print(data['annot']['labels'].shape)
             print("@"*50)
+            continue
             try:
                 optimizer.zero_grad()
 
