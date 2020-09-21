@@ -545,12 +545,12 @@ class Augmenter(object):
             image = image[:, ::-1, :]
 
             rows, cols, channels = image.shape
-            print(annots)
-            print("="*50)
-            print(annots['boxes'])
-            print("="*50)
-            print(annots['boxes'][:, 0])
-            print("-"*50)
+            # print(annots)
+            # print("="*50)
+            # print(annots['boxes'])
+            # print("="*50)
+            # print(annots['boxes'][:, 0])
+            # print("-"*50)
             x1 = annots['boxes'][:, 0].copy()
             x2 = annots['boxes'][:, 2].copy()
             

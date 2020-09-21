@@ -131,7 +131,7 @@ def main(args=None):
                     classification_loss, regression_loss = cnn3([i for i in data['img'].cuda().float()], [{"boxes":i["boxes"],"labels":i["labels"]} for i in data['annot']])
                 else:
                     classification_loss, regression_loss = cnn3([i for i in data['img'].float()], [{"boxes":i["boxes"],"labels":i["labels"]} for i in data['annot']])
-                    
+                print(123)
                 classification_loss = classification_loss.mean()
                 regression_loss = regression_loss.mean()
 
