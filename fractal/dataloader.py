@@ -579,7 +579,8 @@ class Normalizer(object):
     def __call__(self, sample):
 
         image, annots = sample['img'], sample['annot']
-
+        print(annots)
+        print("*"*50)
         return {'img':((image.astype(np.float32)-self.mean)/self.std), 'annot': annots}
 
 class UnNormalizer(object):
