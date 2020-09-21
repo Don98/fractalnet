@@ -528,7 +528,7 @@ class Augmenter(object):
     def __call__(self, sample, flip_x=0.5):
 
         if np.random.rand() < flip_x:
-            image, annots = sample['img'], sample['annot']
+            image, annots = sample['img'], sample['annot']['boxes']
             image = image[:, ::-1, :]
 
             rows, cols, channels = image.shape
@@ -541,7 +541,9 @@ class Augmenter(object):
             annots[:, 0] = cols - x2
             annots[:, 2] = cols - x_tmp
 
-            sample = {'img': image, 'annot': annots}
+            the_annot['boxes'] = annots
+
+            sample = {'img': image, 'annot': the_annot}
 
         return sample
 
