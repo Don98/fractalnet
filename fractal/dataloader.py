@@ -450,7 +450,9 @@ def collater(data):
     imgs = [s['img'] for s in data]
     annots = [s['annot'] for s in data]
     scales = [s['scale'] for s in data]
-        
+    print(len(annots))
+    print(annots[-1])
+    print("+"*50)
     widths = [int(s.shape[0]) for s in imgs]
     heights = [int(s.shape[1]) for s in imgs]
     batch_size = len(imgs)
@@ -580,7 +582,7 @@ class Normalizer(object):
 
         image, annots = sample['img'], sample['annot']
         print(annots)
-        print("*"*50)
+        print("*1"*50)
         return {'img':((image.astype(np.float32)-self.mean)/self.std), 'annot': annots}
 
 class UnNormalizer(object):
