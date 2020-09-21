@@ -482,6 +482,7 @@ def collater(data):
     padded_imgs = padded_imgs.permute(0, 3, 1, 2)
 
     print("="*50)
+    print(annot_padded)
     print(annot_padded.shape)
     
     annot = {"boxes": annot_padded, "labels":annots["labels"]}
