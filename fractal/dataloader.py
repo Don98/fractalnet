@@ -466,7 +466,9 @@ def collater(data):
     
     if max_num_annots > 0:
         print(annots)
+        print(annots["boxes"])
         print(len(annots))
+        print(len(annots["boxes"]))
         annot_padded = torch.ones((len(annots["boxes"]), max_num_annots, 4)) * -1
 
         if max_num_annots > 0:
