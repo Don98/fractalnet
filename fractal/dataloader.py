@@ -67,8 +67,11 @@ class CocoDataset(Dataset):
         sample = {'img': img, 'annot': annot}
         if self.transform:
             sample = self.transform(sample)
-
-        return sample
+        the_img   = [i for i in sample['img']]
+        the_annot = [i for i in sample['annot']]
+        
+        
+        return {'img': the_img, 'annot': the_annot}
 
     def load_image(self, image_index):
         image_info = self.coco.loadImgs(self.image_ids[image_index])[0]
