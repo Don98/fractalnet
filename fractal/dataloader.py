@@ -527,7 +527,7 @@ class Resizer(object):
 
         new_image = np.zeros((rows + pad_w, cols + pad_h, cns)).astype(np.float32)
         new_image[:rows, :cols, :] = image.astype(np.float32)
-
+        
         annots['boxes'][:, :4] *= scale
 
         the_annot = {'boxes': torch.from_numpy(annots['boxes']),'labels':annots['labels']}
@@ -545,7 +545,8 @@ class Augmenter(object):
             image = image[:, ::-1, :]
 
             rows, cols, channels = image.shape
-
+            print(annot['boxes'])
+            print(annot['boxes'][:, 0])
             x1 = annots['boxes'][:, 0].copy()
             x2 = annots['boxes'][:, 2].copy()
             
