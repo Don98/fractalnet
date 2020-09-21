@@ -68,7 +68,6 @@ class CocoDataset(Dataset):
         if self.transform:
             sample = self.transform(sample)
             
-            
         return sample
 
     def load_image(self, image_index):
@@ -488,13 +487,6 @@ def collater(data):
 
 
     padded_imgs = padded_imgs.permute(0, 3, 1, 2)
-
-    # print("="*50)
-    # print(annot_padded)
-    # print(annot_padded.shape)
-    # print("="*50)
-    # print(label_padded)
-    # print(label_padded.shape)
     
     the_annot = {"boxes": annot_padded, "labels":label_padded}
 

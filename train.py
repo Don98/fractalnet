@@ -128,9 +128,9 @@ def main(args=None):
                 optimizer.zero_grad()
 
                 if torch.cuda.is_available():
-                    classification_loss, regression_loss = cnn3([data['img'].cuda().float(), data['annot']])
+                    classification_loss, regression_loss = cnn3([i for i in data['img']].cuda().float(), [{"boxes":i["boxes"],"labels",i["labels"]} for i in data['annot']])
                 else:
-                    classification_loss, regression_loss = cnn3([data['img'].float(), data['annot']])
+                    classification_loss, regression_loss = cnn3([i for i in data['img']].float(), [{"boxes":i["boxes"],"labels",i["labels"]} for i in data['annot']])
                     
                 classification_loss = classification_loss.mean()
                 regression_loss = regression_loss.mean()
