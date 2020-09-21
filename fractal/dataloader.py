@@ -69,7 +69,7 @@ class CocoDataset(Dataset):
             sample = self.transform(sample)
             
             
-        return {'img',[i for i in sample['img']],'annot',sample['annot']}
+        return {'img',[i for i in sample['img']],'annot',sample['annot'],'scale',sample['scale']}
 
     def load_image(self, image_index):
         image_info = self.coco.loadImgs(self.image_ids[image_index])[0]
@@ -101,7 +101,7 @@ class CocoDataset(Dataset):
 
             annotation        = np.zeros((1, 4))
             annotation[0, :4] = a['bbox']
-            label             = self.coco_label_to_label(a['category_id'])
+            label[0,0]        = self.coco_label_to_label(a['category_id'])
             annotations       = np.append(annotations, annotation, axis=0)
             labels            = np.append(labels, label, axis=0)
 
