@@ -479,6 +479,8 @@ def collater(data):
                     print(annot["labels"])
                     print("="*50)
                     print(label_padded)
+                    print("="*50)
+                    print(label_padded[idx,:annot["boxes"].shape[0],:])
                     label_padded[idx, :annot["boxes"].shape[0], :] = annot["labels"]
     else:
         annot_padded = torch.ones((len(annots), 1, 4)) * -1
