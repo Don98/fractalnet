@@ -476,7 +476,7 @@ def collater(data):
                 #print(annot.shape)
                 if annot["boxes"].shape[0] > 0:
                     annot_padded[idx, :annot["boxes"].shape[0], :] = annot["boxes"]
-                    print(annot["label"])
+                    print(annot["labels"])
                     print("="*50)
                     print(label_padded)
                     label_padded[idx, :annot["boxes"].shape[0], :] = annot["labels"]
