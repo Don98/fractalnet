@@ -54,8 +54,8 @@ class FractalNet(nn.Module):
             img_batch, annotations = inputs
         else:
             img_batch = inputs
-        print("img_batch_size : " , img_batch.shape)
-        print("="*50)
+        # print("img_batch_size : " , img_batch.shape)
+        # print("="*50)
         x = self.convH_0(img_batch)
         x = self.drop1(x)
         x = self.relu(x)
