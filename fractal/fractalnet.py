@@ -8,7 +8,7 @@ from fractal.anchors import Anchors
 from fractal import losses
 from torchvision.models.detection import FasterRCNN
 import torchsnooper
-@torchsnooper.snoop()
+# @torchsnooper.snoop()
 class FractalNet(nn.Module):
 
     def __init__(self, num_classes, block, bigblock,istrain=True):
@@ -40,9 +40,9 @@ class FractalNet(nn.Module):
         self.freeze_bn()
 
     def _make_the_block(self, bigblock, inplanes, planes, last_one=False):
-        print("inplanes: ",inplanes)
-        print("planes: ",planes)
-        print("="*50)
+        # print("inplanes: ",inplanes)
+        # print("planes: ",planes)
+        # print("="*50)
         layers = [bigblock(inplanes, planes, stride = 1, kernel_size = 3, padding=1, drop_ratio=0.3,last_one = last_one)]
         return nn.Sequential(*layers)
 
