@@ -7,7 +7,8 @@ from fractal.utils import BasicBlock, BigBlock, Bottleneck, BBoxTransform, ClipB
 from fractal.anchors import Anchors
 from fractal import losses
 from torchvision.models.detection import FasterRCNN
-
+import torchsnooper
+@torchsnooper.snoop()
 class FractalNet(nn.Module):
 
     def __init__(self, num_classes, block, bigblock,istrain=True):
