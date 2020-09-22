@@ -72,6 +72,7 @@ class FractalNet(nn.Module):
         
         print("target ", annotations)
         print("target size : ", annotations.shape)
+        print("x4 size : ", x4.shape)
         print("="*50)
         return x4
 
