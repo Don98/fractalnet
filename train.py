@@ -126,15 +126,13 @@ def main(args=None):
             # print(data['annot']['labels'])
             # print("@"*50)
             # print([i for i in data['img'].cuda().float()])
-            print([{"boxes":data["annot"]["boxes"][i],"labels":data["annot"]["labels"][i]} for i in range(data["annot"]["boxes"].shape[0])])
-            print("@"*50)
             # continue
             try:
                 optimizer.zero_grad()
 
                 if torch.cuda.is_available():
-                    # classification_loss, regression_loss = cnn3([i for i in data['img'].cuda().float()], [{"boxes":i["boxes"],"labels":i["labels"]} for i in data['annot']])
-                    print(cnn3([i for i in data['img'].cuda().float()], [{"boxes":i["boxes"],"labels":i["labels"]} for i in data['annot']]))
+                    # classification_loss, regression_loss = cnn3([i for i in data['img'].cuda().float()], [{"boxes":data["annot"]["boxes"][i],"labels":data["annot"]["labels"][i]} for i in range(data["annot"]["boxes"].shape[0])]))
+                    print(cnn3([i for i in data['img'].cuda().float()], [{"boxes":data["annot"]["boxes"][i],"labels":data["annot"]["labels"][i]} for i in range(data["annot"]["boxes"].shape[0])]))
                     exit()
                 else:
                     classification_loss, regression_loss = cnn3([i for i in data['img'].float()], [{"boxes":i["boxes"],"labels":i["labels"]} for i in data['annot']])
