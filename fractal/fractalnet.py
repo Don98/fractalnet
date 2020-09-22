@@ -49,20 +49,6 @@ class FractalNet(nn.Module):
                 layer.eval()
 
     def forward(self, inputs):
-
-        self.convH_0 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
-        self.drop1 = nn.Dropout(self.drop_ratio)
-        self.relu = nn.ReLU(inplace=True)
-        self.bn1 = nn.BatchNorm2d(64)
-        self.maxpoolH_0 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        self.maxpool0_4 = nn.MaxPool2d(kernel_size=7, stride=7, padding=1)
-        
-        self.the_block1 = self._make_the_block(bigblock, inplanes = 64, planes = 128)
-        self.the_block2 = self._make_the_block(bigblock, inplanes = 128, planes = 256)
-        self.the_block3 = self._make_the_block(bigblock, inplanes = 256, planes = 512)
-        self.the_block4 = self._make_the_block(bigblock, inplanes = 512, planes = 1024,last_one = True)
-        
-
         if self.training:
             img_batch, annotations = inputs
         else:
