@@ -39,6 +39,7 @@ class BigBlock(nn.Module):
 
     def __init__(self, inplanes, planes, stride = 1, kernel_size = 3, padding=1, drop_ratio=0.3,last_one = False):
         super(BigBlock, self).__init__()
+        self.last_one = last_one
         # print("inplanes: ",inplanes)
         # print("planes: ",planes)
         # print("="*50)
@@ -101,7 +102,7 @@ class BigBlock(nn.Module):
         x_con3_6 = self.con3_6(x_con3_5_plus)
         x_con3_7 = self.con3_7(x_con3_6)
         
-        if last_one:
+        if self.last_one:
             x_con3_31_plus = (x_con0_0 + x_con1_1 + x_con2_3 + x_con3_7) / 4
             return self.maxpool1(x_con3_31_plus)
         else:
