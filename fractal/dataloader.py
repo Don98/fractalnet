@@ -507,7 +507,6 @@ class Resizer(object):
         # min_side=608, max_side=1024
         min_side = self.center[0];max_side = self.center[1]
         image, annots = sample['img'], sample['annot']
-
         rows, cols, cns = image.shape
 
         smallest_side = min(rows, cols)
