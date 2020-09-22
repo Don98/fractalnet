@@ -70,10 +70,11 @@ class FractalNet(nn.Module):
         x3 = self.the_block3(x2)
         x4 = self.the_block4(x3)
         
-        print("target ", annotations)
-        print("target size : ", annotations.shape)
-        print("x4 size : ", x4.shape)
-        print("="*50)
+        # print("target ", annotations)
+        # print("target size : ", annotations.shape)
+        # print("x4 size : ", x4.shape)
+        # print("="*50)
+        print(self.convH_0.weight.data.size())
         return x4
 
 
