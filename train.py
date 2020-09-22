@@ -123,9 +123,9 @@ def main(args=None):
         epoch_loss = []
 
         for iter_num, data in enumerate(dataloader_train):
-            print(data['annot']['labels'])
-            print("@"*50)
-            continue
+            # print(data['annot']['labels'])
+            # print("@"*50)
+            # continue
             try:
                 optimizer.zero_grad()
 

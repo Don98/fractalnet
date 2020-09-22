@@ -61,12 +61,12 @@ class CocoDataset(Dataset):
         return len(self.image_ids)
 
     def __getitem__(self, idx):
-        print("*"*50)
+        # print("*"*50)
         img = self.load_image(idx)
         annot = self.load_annotations(idx)
         sample = {'img': img, 'annot': annot}
-        print("annot: ", annot)
-        print("="*50)
+        # print("annot: ", annot)
+        # print("="*50)
         
         if self.transform:
             sample = self.transform(sample)
@@ -90,9 +90,8 @@ class CocoDataset(Dataset):
         labels          = np.zeros((0, 1))
 
         # some images appear to miss annotations (like image with id 257034)
-        print("non-annotation :" , len(annotations_ids))
         if len(annotations_ids) == 0:
-            return annotations
+            return {'boxes':annotations,'labels':labels}
 
         # parse annotations
         coco_annotations = self.coco.loadAnns(annotations_ids)
@@ -112,8 +111,8 @@ class CocoDataset(Dataset):
         # transform from [x, y, w, h] to [x1, y1, x2, y2]
         annotations[:, 2] = annotations[:, 0] + annotations[:, 2]
         annotations[:, 3] = annotations[:, 1] + annotations[:, 3]
-        print(labels)
-        print("*1"*50)
+        # print(labels)
+        # print("*1"*50)
         return {'boxes':annotations,'labels':labels}
 
     def coco_label_to_label(self, coco_label):
@@ -531,14 +530,14 @@ class Resizer(object):
 
         new_image = np.zeros((rows + pad_w, cols + pad_h, cns)).astype(np.float32)
         new_image[:rows, :cols, :] = image.astype(np.float32)
-        print("=1"*50)
+        # print("=1"*50)
         # print(annots)
-        print(annots['boxes'][:,:4])
+        # print(annots['boxes'][:,:4])
         annots['boxes'][:, :4] *= scale
 
         the_annot = {'boxes': torch.from_numpy(annots['boxes']),'labels':annots['labels']}
 
-        print("-"*50)
+        # print("-"*50)
         return {'img': torch.from_numpy(new_image), 'annot': the_annot, 'scale': scale}
 
 
