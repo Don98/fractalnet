@@ -75,7 +75,6 @@ class FractalNet(nn.Module):
         # print("x4 size : ", x4.shape)
         # print("="*50)
         print(self.convH_0.weight.data.size())
-        print(self.drop1.weight.data.size())
         print(self.relu.weight.data.size())
         print(self.bn1.weight.data.size())
         print(self.maxpoolH_0.weight.data.size())
@@ -85,7 +84,6 @@ class FractalNet(nn.Module):
         print(self.the_block4.weight.data.size())
         
         print(self.convH_0.bias.data.size())
-        print(self.drop1.bias.data.size())
         print(self.relu.bias.data.size())
         print(self.bn1.bias.data.size())
         print(self.maxpoolH_0.bias.data.size())
