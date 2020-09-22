@@ -21,7 +21,7 @@ assert torch.__version__.split('.')[0] == '1'
 import torchsnooper
 print('CUDA available: {}'.format(torch.cuda.is_available()))
 
-@torchsnooper.snoop()
+# @torchsnooper.snoop()
 def main(args=None):
     parser = argparse.ArgumentParser(description='Simple training script for training a cnn3 network.')
 
@@ -125,6 +125,9 @@ def main(args=None):
         for iter_num, data in enumerate(dataloader_train):
             # print(data['annot']['labels'])
             # print("@"*50)
+            print([i for i in data['img'].cuda().float()])
+            print([{"boxes":i["boxes"],"labels":i["labels"]} for i in data['annot']])
+            print("@"*50)
             # continue
             try:
                 optimizer.zero_grad()
@@ -161,6 +164,7 @@ def main(args=None):
                 del regression_loss
             except Exception as e:
                 print(e)
+                exit()
                 continue
 
         if parser.dataset == 'coco':
