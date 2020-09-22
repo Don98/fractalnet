@@ -12,13 +12,13 @@ import torchsnooper
 class FractalNet(nn.Module):
 
     def __init__(self, num_classes, block, bigblock,istrain=True):
-        self.inplanes = 64
+        self.inplanes = 800
         self.drop_ratio = 0
         self.training = istrain
         if self.training:
             self.drop_ratio = 0.3
         super(FractalNet, self).__init__()
-        self.convH_0 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.convH_0 = nn.Conv2d(800, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.drop1 = nn.Dropout(self.drop_ratio)
         self.relu = nn.ReLU(inplace=True)
         self.bn1 = nn.BatchNorm2d(64)
