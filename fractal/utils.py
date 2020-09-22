@@ -40,9 +40,6 @@ class BigBlock(nn.Module):
     def __init__(self, inplanes, planes, stride = 1, kernel_size = 3, padding=1, drop_ratio=0.3,last_one = False):
         super(BigBlock, self).__init__()
         self.last_one = last_one
-        # print("inplanes: ",inplanes)
-        # print("planes: ",planes)
-        # print("="*50)
         #第一列
         self.con0_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         
@@ -61,6 +58,7 @@ class BigBlock(nn.Module):
         self.con2_2 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         self.con3_4 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         self.con3_5 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.con1_1 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
       
         #第四块
         self.con2_3 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
@@ -91,6 +89,7 @@ class BigBlock(nn.Module):
         x_con3_3_plus = (x_con3_3 + x_con2_1 + x_con1_0) / 3
         
         #第三块    
+        x_con1_1 = self.con1_1(x_con3_3_plus)
         x_con2_2 = self.con2_2(x_con3_3_plus)
         x_con3_4 = self.con3_4(x_con3_3_plus)
         x_con3_5 = self.con3_5(x_con3_4)
