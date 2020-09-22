@@ -126,7 +126,7 @@ def main(args=None):
             # print(data['annot']['labels'])
             # print("@"*50)
             # print([i for i in data['img'].cuda().float()])
-            print(data['annot'])
+            print([{"boxes":data["annot"]["boxes"][i],"labels":data["annot"]["labels"][i]} for i in range(data["annot"]["boxes"].shape[0])])
             print("@"*50)
             # continue
             try:
