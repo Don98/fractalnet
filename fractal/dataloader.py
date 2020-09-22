@@ -65,7 +65,7 @@ class CocoDataset(Dataset):
         img = self.load_image(idx)
         annot = self.load_annotations(idx)
         sample = {'img': img, 'annot': annot}
-        print(annot)
+        print("annot: ", annot)
         print("="*50)
         
         if self.transform:
@@ -90,6 +90,7 @@ class CocoDataset(Dataset):
         labels          = np.zeros((0, 1))
 
         # some images appear to miss annotations (like image with id 257034)
+        print("non-annotation :" , len(annotations_ids))
         if len(annotations_ids) == 0:
             return annotations
 
