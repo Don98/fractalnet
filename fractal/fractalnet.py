@@ -57,10 +57,10 @@ class FractalNet(nn.Module):
         self.maxpoolH_0 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.maxpool0_4 = nn.MaxPool2d(kernel_size=7, stride=7, padding=1)
         
-        self.the_block1 = self._make_the_block1(bigblock, inplanes = 64, planes = 128)
-        self.the_block2 = self._make_the_block1(bigblock, inplanes = 128, planes = 256)
-        self.the_block3 = self._make_the_block1(bigblock, inplanes = 256, planes = 512)
-        self.the_block4 = self._make_the_block1(bigblock, inplanes = 512, planes = 1024,last_one = True)
+        self.the_block1 = self._make_the_block(bigblock, inplanes = 64, planes = 128)
+        self.the_block2 = self._make_the_block(bigblock, inplanes = 128, planes = 256)
+        self.the_block3 = self._make_the_block(bigblock, inplanes = 256, planes = 512)
+        self.the_block4 = self._make_the_block(bigblock, inplanes = 512, planes = 1024,last_one = True)
         
 
         if self.training:
