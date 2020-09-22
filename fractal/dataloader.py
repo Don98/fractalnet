@@ -530,7 +530,7 @@ class Resizer(object):
 
         new_image = np.zeros((rows + pad_w, cols + pad_h, cns)).astype(np.float32)
         new_image[:rows, :cols, :] = image.astype(np.float32)
-        print("="*50)
+        print("=1"*50)
         # print(annots)
         print(annots['boxes'][:,:4])
         annots['boxes'][:, :4] *= scale
