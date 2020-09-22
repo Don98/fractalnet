@@ -39,9 +39,9 @@ class BigBlock(nn.Module):
 
     def __init__(self, inplanes, planes, stride = 1, kernel_size = 3, padding=1, drop_ratio=0.3,last_one = False):
         super(BigBlock, self).__init__()
-        print("inplanes: ",inplanes)
-        print("planes: ",planes)
-        print("="*50)
+        # print("inplanes: ",inplanes)
+        # print("planes: ",planes)
+        # print("="*50)
         #第一列
         self.con0_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         
