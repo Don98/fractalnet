@@ -111,8 +111,8 @@ class CocoDataset(Dataset):
         # transform from [x, y, w, h] to [x1, y1, x2, y2]
         annotations[:, 2] = annotations[:, 0] + annotations[:, 2]
         annotations[:, 3] = annotations[:, 1] + annotations[:, 3]
-        # print(labels)
-        # print("*"*50)
+        print(labels)
+        print("*"*50)
         return {'boxes':annotations,'labels':labels}
 
     def coco_label_to_label(self, coco_label):
@@ -451,9 +451,7 @@ def collater(data):
     imgs = [s['img'] for s in data]
     annots = [s['annot'] for s in data]
     scales = [s['scale'] for s in data]
-    # print(len(annots))
-    # print(annots[-1])
-    # print("+"*50)
+
     widths = [int(s.shape[0]) for s in imgs]
     heights = [int(s.shape[1]) for s in imgs]
     batch_size = len(imgs)
