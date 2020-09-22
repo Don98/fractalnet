@@ -125,8 +125,8 @@ def main(args=None):
         for iter_num, data in enumerate(dataloader_train):
             # print(data['annot']['labels'])
             # print("@"*50)
-            print([i for i in data['img'].cuda().float()])
-            print([{"boxes":i["boxes"],"labels":i["labels"]} for i in data['annot']])
+            # print([i for i in data['img'].cuda().float()])
+            print(data['annot'])
             print("@"*50)
             # continue
             try:
