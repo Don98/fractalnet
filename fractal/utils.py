@@ -79,7 +79,7 @@ class BigBlock(nn.Module):
         x_con3_0 = self.con3_0(x)
         x_con3_1 = self.con3_1(x_con3_0)
         
-        x_con3_1_plus = torch.cat((x_con3_1, x_con2_0), 1)
+        x_con3_1_plus = (x_con3_1 + x_con2_0) / 2
         
         #第二块    
         x_con2_1 = self.con2_1(x_con3_1_plus)
@@ -87,14 +87,14 @@ class BigBlock(nn.Module):
         x_con3_3 = self.con3_3(x_con3_2)
         x_con1_0 = self.con1_0(x)
         
-        x_con3_3_plus = torch.cat((x_con3_3, x_con2_1,x_con1_0), 1)
+        x_con3_3_plus = (x_con3_3 + x_con2_1 + x_con1_0) / 3
         
         #第三块    
         x_con2_2 = self.con2_2(x_con3_3_plus)
         x_con3_4 = self.con3_4(x_con3_3_plus)
         x_con3_5 = self.con3_5(x_con3_4)
         
-        x_con3_5_plus = torch.cat((x_con3_5, x_con2_2), 1)
+        x_con3_5_plus = (x_con3_5 + x_con2_2) / 2
         
         #第四块    
         x_con2_3 = self.con2_3(x_con3_5_plus)
@@ -102,14 +102,14 @@ class BigBlock(nn.Module):
         x_con3_7 = self.con3_7(x_con3_6)
         
         if last_one:
-            x_con3_31_plus = torch.cat((x_con0_0, x_con1_1, x_con2_3, x_con3_7), 1)
+            x_con3_31_plus = (x_con0_0 + x_con1_1 + x_con2_3 + x_con3_7) / 4
             return self.maxpool1(x_con3_31_plus)
         else:
             pool0_0 = self.maxpool(x_con0_0)
             pool1_1 = self.maxpool(x_con1_1)
             pool2_3 = self.maxpool(x_con2_3)
             pool3_7 = self.maxpool(x_con3_7)
-            return torch.cat((pool0_0, pool1_1, pool2_3, pool3_7), 1)
+            return (pool0_0 + pool1_1 + pool2_3 + pool3_7) / 4
 
         # return out
 
