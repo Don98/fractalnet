@@ -55,11 +55,8 @@ class FractalNet(nn.Module):
                 layer.eval()
 
     def forward(self, inputs):
-        if self.training:
-            img_batch, annotations = inputs
-        else:
-            img_batch = inputs
-        x = self.convH_0(img_batch.unsqueeze(0))
+        img_batch = inputs
+        x = self.convH_0(img_batch)
         x = self.drop1(x)
         x = self.relu(x)
         x = self.bn1(x)

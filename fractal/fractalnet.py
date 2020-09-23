@@ -55,11 +55,9 @@ class FractalNet(nn.Module):
                 layer.eval()
 
     def forward(self, inputs):
-        if self.training:
-            img_batch, annotations = inputs
-        else:
-            img_batch = inputs
-        x = self.convH_0(img_batch.unsqueeze(0))
+
+        img_batch = inputs
+        x = self.convH_0(img_batch)
         x = self.drop1(x)
         x = self.relu(x)
         x = self.bn1(x)
@@ -71,9 +69,9 @@ class FractalNet(nn.Module):
         x4 = self.the_block4(x3)
         
         # print("target ", annotations)
-        print("target size : ", annotations.shape)
-        print("x4 size : ", x4.shape)
-        print("="*50)
+        # print("target size : ", annotations.shape)
+        # print("x4 size : ", x4.shape)
+        # print("="*50)
         return x4
 
 
@@ -83,7 +81,6 @@ def Fractalnet(num_classes, pretrained=False, istrain = True,**kwargs):
         pretrained (bool): If True, returns a model pre-trained on ImageNet
     """
     backbone = FractalNet(num_classes, BasicBlock, BigBlock,istrain, **kwargs)
-    print(backbone)
     model = FasterRCNN(backbone,num_classes=num_classes)
     # if pretrained:
         # model.load_state_dict(model_zoo.load_url(model_urls['resnet18'], model_dir='.'), strict=False)
