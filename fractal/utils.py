@@ -31,9 +31,9 @@ class BasicBlock(nn.Module):
         out = self.drop1(out)
         out = self.relu(out)
         out = self.bn1(out)
-        print(self.conv1.weight.data.size())
-        print(self.conv1.bias.data.size())
-        print("*"*50)
+        # print(self.conv1.weight.data.size())
+        # print(self.conv1.bias.data.size())
+        # print("*"*50)
         # print(self.conv1.weight.data)
         # print(self.conv1.bias.data)
         return out
