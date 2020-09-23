@@ -21,7 +21,7 @@ assert torch.__version__.split('.')[0] == '1'
 import torchsnooper
 print('CUDA available: {}'.format(torch.cuda.is_available()))
 
-# @torchsnooper.snoop()
+@torchsnooper.snoop()
 def main(args=None):
     parser = argparse.ArgumentParser(description='Simple training script for training a cnn3 network.')
 
@@ -126,7 +126,7 @@ def main(args=None):
             # print(data['annot']['labels'])
             # print("@"*50)
             images = [i for i in data['img'].cuda().float()]
-            annots = [{"boxes":data["annot"]["boxes"][i],"labels":torch.from_numpy(data["annot"]["labels"][i])} for i in range(data["annot"]["boxes"].shape[0])]
+            annots = [{"boxes":data["annot"]["boxes"][i],"labels":torch.Tensor(data["annot"]["labels"][i])} for i in range(data["annot"]["boxes"].shape[0])]
             try:
                 optimizer.zero_grad()
 
