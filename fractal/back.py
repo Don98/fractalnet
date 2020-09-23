@@ -79,13 +79,14 @@ class FractalNet(nn.Module):
 
 if __name__ == "__main__":
     backbone = FractalNet(11, BasicBlock, BigBlock,True)
-    images, boxes = torch.rand(4, 3, 800, 1200), torch.rand(4, 11, 4)
-    labels = torch.randint(1, 91, (4, 11))
-    images = list(image for image in images)
+    images, boxes = torch.rand(1, 3, 800, 1200), torch.rand(1, 11, 4)
+    labels = torch.randint(1, 91, (1, 11))
+    # images = list(image for image in images)
     targets = []
     for i in range(len(images)):
         d = {}
         d['boxes'] = boxes[i]
         d['labels'] = labels[i]
         targets.append(d)
-    output = backbone((images, targets))
+    # output = backbone((images, targets))
+    model = FasterRCNN(backbone,num_classes=11)
