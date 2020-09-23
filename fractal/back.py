@@ -71,9 +71,9 @@ class FractalNet(nn.Module):
         x4 = self.the_block4(x3)
         
         # print("target ", annotations)
-        print("target size : ", annotations.shape)
-        print("x4 size : ", x4.shape)
-        print("="*50)
+        # print("target size : ", annotations.shape)
+        # print("x4 size : ", x4.shape)
+        # print("="*50)
         return x4
 
 
@@ -90,3 +90,5 @@ if __name__ == "__main__":
         targets.append(d)
     # output = backbone((images, targets))
     model = FasterRCNN(backbone,num_classes=11)
+    output = model((images, targets))
+    
