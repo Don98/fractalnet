@@ -132,7 +132,7 @@ def main(args=None):
 
                 if torch.cuda.is_available():
                     # classification_loss, regression_loss = cnn3([i for i in data['img'].cuda().float()], [{"boxes":data["annot"]["boxes"][i],"labels":data["annot"]["labels"][i]} for i in range(data["annot"]["boxes"].shape[0])]))
-                    print(cnn3([i for i in data['img'].cuda().float()], [{"boxes":data["annot"]["boxes"][i].int(),"labels":data["annot"]["labels"][i]} for i in range(data["annot"]["boxes"].shape[0])]))
+                    print(cnn3([i for i in data['img'].cuda().float()], [{"boxes":data["annot"]["boxes"][i],"labels":data["annot"]["labels"][i].int()} for i in range(data["annot"]["boxes"].shape[0])]))
                     exit()
                 else:
                     classification_loss, regression_loss = cnn3([i for i in data['img'].float()], [{"boxes":i["boxes"],"labels":i["labels"]} for i in data['annot']])
