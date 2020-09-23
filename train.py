@@ -110,14 +110,14 @@ def main(args=None):
 
     loss_hist = collections.deque(maxlen=500)
     
-    cnn3.train()
+    # cnn3.train()
     # cnn3.module.freeze_bn()
 
     print('Num training images: {}'.format(len(dataset_train)))
     
     for epoch_num in range(parser.epochs):
 
-        cnn3.train()
+        # cnn3.train()
         # cnn3.module.freeze_bn()
 
         epoch_loss = []
@@ -127,8 +127,6 @@ def main(args=None):
             # print("@"*50)
             images = [i for i in data['img'].cuda().float()]
             annots = [{"boxes":data["annot"]["boxes"][i],"labels":data["annot"]["labels"][i].long()} for i in range(data["annot"]["boxes"].shape[0])]
-            print(images)
-            print(annots)
             try:
                 optimizer.zero_grad()
 
