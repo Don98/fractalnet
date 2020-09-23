@@ -8,7 +8,7 @@ import torchsnooper
 def conv3x3(in_planes, out_planes, stride=1,kernel_size=3,padding=1):
     """3x3 convolution with padding"""
     return nn.Conv2d(in_planes, out_planes, kernel_size=kernel_size, stride=stride,
-                     padding=padding, bias=True)
+                     padding=padding, bias=False)
 
 
 class BasicBlock(nn.Module):
@@ -20,8 +20,6 @@ class BasicBlock(nn.Module):
         # print("-"*50)
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride, kernel_size, padding)
-        # self.conv1.bias.data = torch.zeros((inplanes))
-        print("inplace is " , inplanes)
         self.drop1 = nn.Dropout(drop_ratio)
         self.relu = nn.ReLU(inplace=True)
         self.bn1 = nn.BatchNorm2d(planes)
