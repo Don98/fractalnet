@@ -40,9 +40,6 @@ class FractalNet(nn.Module):
         self.freeze_bn()
 
     def _make_the_block(self, bigblock, inplanes, planes, last_one=False):
-        # print("inplanes: ",inplanes)
-        # print("planes: ",planes)
-        # print("="*50)
         layers = [bigblock(inplanes, planes, stride = 1, kernel_size = 3, padding=1, drop_ratio=0.3,last_one = last_one)]
         return nn.Sequential(*layers)
 
@@ -57,8 +54,6 @@ class FractalNet(nn.Module):
             img_batch, annotations = inputs
         else:
             img_batch = inputs
-        # print("img_batch_size : " , img_batch.shape)
-        # print("="*50)
         x = self.convH_0(img_batch.unsqueeze(0))
         x = self.drop1(x)
         x = self.relu(x)
@@ -70,7 +65,7 @@ class FractalNet(nn.Module):
         x3 = self.the_block3(x2)
         x4 = self.the_block4(x3)
         
-        print("target ", annotations)
+        # print("target ", annotations)
         print("target size : ", annotations.shape)
         print("x4 size : ", x4.shape)
         print("="*50)
