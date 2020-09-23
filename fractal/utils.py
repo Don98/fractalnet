@@ -20,10 +20,10 @@ class BasicBlock(nn.Module):
         # print("-"*50)
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride, kernel_size, padding)
+        self.conv1.bias.data = torch.zeros((inplanes))
         self.drop1 = nn.Dropout(drop_ratio)
         self.relu = nn.ReLU(inplace=True)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.conv1.bias.data = torch.zeros((inplaces))
 
     def forward(self, x):
         residual = x
