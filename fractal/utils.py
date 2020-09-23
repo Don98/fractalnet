@@ -8,7 +8,7 @@ import numpy as np
 def conv3x3(in_planes, out_planes, stride=1,kernel_size=3,padding=1):
     """3x3 convolution with padding"""
     return nn.Conv2d(in_planes, out_planes, kernel_size=kernel_size, stride=stride,
-                     padding=padding, bias=False)
+                     padding=padding, bias=True)
 
 
 class BasicBlock(nn.Module):
