@@ -126,7 +126,7 @@ def main(args=None):
             # print(data['annot']['labels'])
             # print("@"*50)
             images = [i for i in data['img'].cuda().float()]
-            annots = [{"boxes":data["annot"]["boxes"][i],"labels":data["annot"]["labels"][i].to(torch.int64)} for i in range(data["annot"]["boxes"].shape[0])]
+            annots = [{"boxes":data["annot"]["boxes"][i],"labels":torch.from_numpy(data["annot"]["labels"][i])} for i in range(data["annot"]["boxes"].shape[0])]
             try:
                 optimizer.zero_grad()
 
