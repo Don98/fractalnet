@@ -87,7 +87,7 @@ class CocoDataset(Dataset):
         # get ground truth annotations
         annotations_ids = self.coco.getAnnIds(imgIds=self.image_ids[image_index], iscrowd=False)
         annotations     = np.zeros((0, 4))
-        labels          = np.zeros((0, 1))
+        labels          = np.zeros((0, 1),dtype="int64")
 
         # some images appear to miss annotations (like image with id 257034)
         if len(annotations_ids) == 0:
