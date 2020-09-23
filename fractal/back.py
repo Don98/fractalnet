@@ -78,7 +78,7 @@ class FractalNet(nn.Module):
 
 
 if __name__ == "__main__":
-    backbone = FractalNet(11, BasicBlock, BigBlock,istrain, **kwargs)
+    backbone = FractalNet(11, BasicBlock, BigBlock,True, **kwargs)
     images, boxes = torch.rand(4, 3, 800, 1200), torch.rand(4, 11, 4)
     labels = torch.randint(1, 91, (4, 11))
     images = list(image for image in images)
