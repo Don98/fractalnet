@@ -136,7 +136,7 @@ def main(args=None):
                 # d['labels'] = data["annot"][i]["labels"]
                 # annots.append(d)
             # print(annots)
-            annot = data["annot"]
+            annots = data["annot"]
             try:
                 optimizer.zero_grad()
 
