@@ -466,35 +466,25 @@ def collater(data):
         padded_imgs[i, :int(img.shape[0]), :int(img.shape[1]), :] = img
 
     max_num_annots = max(annot['boxes'].shape[0] for annot in annots)
-    
-    # print(annots)
-    # print("="*100)
-    # print(max_num_annots)
-    # print("="*50)
-    if max_num_annots > 0:
-        annot_padded = torch.ones((len(annots), max_num_annots, 4)) * -1
-        label_padded = torch.ones((len(annots), max_num_annots, 1)) * -1
-        if max_num_annots > 0:
-            for idx, annot in enumerate(annots):
-                #print(annot.shape)
-                if annot["boxes"].shape[0] > 0:
-                    annot_padded[idx, :annot["boxes"].shape[0], :] = annot["boxes"]
-                    # print(annot["labels"])
-                    # print("="*50)
-                    # print(label_padded)
-                    # print("="*50)
-                    # print(label_padded[idx,:annot["boxes"].shape[0],:])
-                    label_padded[idx, :annot["boxes"].shape[0], :] = torch.from_numpy(annot["labels"])
-    else:
-        annot_padded = torch.ones((len(annots), 1, 4)) * -1
-        label_padded = torch.ones((len(annots), 1, 1)) * -1
+
+    # if max_num_annots > 0:
+        # annot_padded = torch.ones((len(annots), max_num_annots, 4)) * -1
+        # label_padded = torch.ones((len(annots), max_num_annots, 1)) * -1
+        # if max_num_annots > 0:
+            # for idx, annot in enumerate(annots):
+                # if annot["boxes"].shape[0] > 0:
+                    # annot_padded[idx, :annot["boxes"].shape[0], :] = annot["boxes"]
+                    # label_padded[idx, :annot["boxes"].shape[0], :] = torch.from_numpy(annot["labels"])
+    # else:
+        # annot_padded = torch.ones((len(annots), 1, 4)) * -1
+        # label_padded = torch.ones((len(annots), 1, 1)) * -1
 
 
     padded_imgs = padded_imgs.permute(0, 3, 1, 2)
     
-    the_annot = {"boxes": annot_padded, "labels":label_padded}
+    # the_annot = {"boxes": annot_padded, "labels":label_padded}
 
-    return {'img': padded_imgs, 'annot': the_annot, 'scale': scales}
+    return {'img': padded_imgs, 'annot': annots, 'scale': scales}
 
 class Resizer(object):
     """Convert ndarrays in sample to Tensors."""
