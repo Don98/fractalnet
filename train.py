@@ -125,6 +125,8 @@ def main(args=None):
         for iter_num, data in enumerate(dataloader_train):
             # print(data['annot']['labels'])
             # print("@"*50)
+            print(data["img"])
+            print(data["annot"])
             images = [i for i in data['img'].cuda().float()]
             annots = [{"boxes":data["annot"]["boxes"][i],"labels":data["annot"]["labels"][i].long()} for i in range(data["annot"]["boxes"].shape[0])]
             print(annots)
