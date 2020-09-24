@@ -128,8 +128,15 @@ def main(args=None):
             print(data["img"])
             print(data["annot"])
             images = [i for i in data['img'].cuda().float()]
-            annots = [{"boxes":data["annot"]["boxes"][i],"labels":data["annot"]["labels"][i].long()} for i in range(data["annot"]["boxes"].shape[0])]
-            print(annots)
+            # annots = [{"boxes":data["annot"]["boxes"][i],"labels":data["annot"]["labels"][i].long()} for i in range(data["annot"]["boxes"].shape[0])]
+            # annots = []
+            # for i in range(len(data["annot"])):
+                # d = {}
+                # d['boxes'] = data["annot"][i]["boxes"]
+                # d['labels'] = data["annot"][i]["labels"]
+                # annots.append(d)
+            # print(annots)
+            annot = data["annot"]
             try:
                 optimizer.zero_grad()
 
