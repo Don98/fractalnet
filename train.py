@@ -137,7 +137,6 @@ def main(args=None):
                 # annots.append(d)
             # print(annots)
             annots = data["annot"]
-            annots.pop("scale")
             try:
                 optimizer.zero_grad()
 
