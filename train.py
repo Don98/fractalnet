@@ -127,7 +127,7 @@ def main(args=None):
             # print("@"*50)
             images = [i for i in data['img'].cuda().float()]
             annots = [{"boxes":data["annot"]["boxes"][i],"labels":data["annot"]["labels"][i].long()} for i in range(data["annot"]["boxes"].shape[0])]
-            print(annots["labels"])
+            print(annots)
             try:
                 optimizer.zero_grad()
 
