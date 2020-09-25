@@ -82,8 +82,8 @@ def main(args=None):
     dataloader_train = DataLoader(dataset_train, num_workers=1, collate_fn=collater, batch_sampler=sampler)
     
     if dataset_val is not None:
-        sampler_val = AspectRatioBasedSampler(dataset_val, batch_size=1, drop_last=False)
-        dataloader_val = DataLoader(dataset_val, num_workers=3, collate_fn=collater, batch_sampler=sampler_val)
+        sampler_val = AspectRatioBasedSampler(dataset_val, batch_size=2, drop_last=False)
+        dataloader_val = DataLoader(dataset_val, num_workers=1, collate_fn=collater, batch_sampler=sampler_val)
     print("Num classes : ", dataset_train.num_classes())
     # Create the model
     if parser.depth == 0:
@@ -131,25 +131,40 @@ def main(args=None):
                 d = {}
                 d["labels"] = data["annot"][i]["labels"].reshape((1,data["annot"][i]["labels"].shape[0]))[0].cuda()
                 d["boxes"] = torch.tensor(data["annot"][i]["boxes"],dtype=torch.float).cuda()
-                print(d["boxes"])
-                print("="*50)
+            #    print(d["boxes"])
+            #    print("="*50)
                 if d["boxes"].shape[0] != 0:
                     targets.append(d)
                     images.append(data['img'][i].float().cuda())
             output = cnn3(images, targets)
-            print(output)
-            print("="*50)
-            if iter_num == 50:
+            #print(output)
+            #print("="*50)
+            if iter_num == 2:
                 break
             
             torch.nn.utils.clip_grad_norm_(cnn3.parameters(), 0.1)
 
             optimizer.step()
-        if parser.dataset == 'coco':
+        cnn3.eval()
+        for iter_num ,data in enumerate(dataloader_val):
+            images = []
+            targets = []
+            for i in range(len(data["annot"])):
+                data["annot"][i]["labels"] = torch.tensor(data["annot"][i]["labels"],dtype=torch.int64)
+                d = {}
+                d["labels"] = data["annot"][i]["labels"].reshape((1,data["annot"][i]["labels"].shape[0]))[0].cuda()
+                d["boxes"] = torch.tensor(data["annot"][i]["boxes"],dtype=torch.float).cuda()
+            #    print(d["boxes"])
+            #    print("="*50)
+                if d["boxes"].shape[0] != 0:
+                    targets.append(d)
+                    images.append(data['img'][i].float().cuda())
+            #print(cnn3(images))
+ #       if parser.dataset == 'coco':
 
-            print('Evaluating dataset')
+ #           print('Evaluating dataset')
 
-            coco_eval.evaluate_coco(dataset_val, cnn3)
+#            coco_eval.evaluate_coco(dataset_val, cnn3)
 #            loss_hist.append(float(loss))
 #            epoch_loss.append(float(loss))
                 
