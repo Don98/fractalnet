@@ -64,13 +64,9 @@ class CocoDataset(Dataset):
         # print("*"*50)
         img = self.load_image(idx)
         annot = self.load_annotations(idx)
-        sample = {'img': img, 'annot': annot}
-        # print("annot: ", annot)
-        # print("="*50)
-        
+        sample = {'img': img, 'annot': annot}        
         if self.transform:
             sample = self.transform(sample)
-            
         return sample
 
     def load_image(self, image_index):

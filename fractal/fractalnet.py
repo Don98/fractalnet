@@ -19,7 +19,6 @@ class FractalNet(nn.Module):
             self.drop_ratio = 0.3
         super(FractalNet, self).__init__()
         self.convH_0 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
-        # self.convH_0.bias.data = torch.zeros((64))
         self.drop1 = nn.Dropout(self.drop_ratio)
         self.relu = nn.ReLU(inplace=True)
         self.bn1 = nn.BatchNorm2d(64)
@@ -33,14 +32,10 @@ class FractalNet(nn.Module):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
-                # print("kernel size : " , m.kernel_size[0]," ", m.kernel_size , " ", m.out_channels)
-                # print("="*50)
                 m.weight.data.normal_(0, math.sqrt(2. / n))
             elif isinstance(m, nn.BatchNorm2d):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
-                # print("bias size : " , m.bias.data.size())
-                # print("="*50)
 
         self.freeze_bn()
 

@@ -16,12 +16,12 @@ from torch.utils.data import DataLoader
 from fractal import coco_eval
 from fractal import csv_eval
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "5"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 assert torch.__version__.split('.')[0] == '1'
 import torchsnooper
 print('CUDA available: {}'.format(torch.cuda.is_available()))
 
-@torchsnooper.snoop()
+#@torchsnooper.snoop()
 def main(args=None):
     parser = argparse.ArgumentParser(description='Simple training script for training a cnn3 network.')
 
@@ -97,10 +97,10 @@ def main(args=None):
         if torch.cuda.is_available():
             cnn3 = cnn3.cuda()
 
-    if torch.cuda.is_available():
-        cnn3 = torch.nn.DataParallel(cnn3).cuda()
-    else:
-        cnn3 = torch.nn.DataParallel(cnn3)
+    #if torch.cuda.is_available():
+    #    cnn3 = torch.nn.DataParallel(cnn3,device_ids=[0]).cuda()
+    #else:
+    #    cnn3 = torch.nn.DataParallel(cnn3)
 
     cnn3.training = True
 
@@ -112,7 +112,7 @@ def main(args=None):
     
     # cnn3.train()
     # cnn3.module.freeze_bn()
-    cnn3 = cnn3.double()
+    cnn3 = cnn3.float()
     print('Num training images: {}'.format(len(dataset_train)))
     
     for epoch_num in range(parser.epochs):
@@ -123,69 +123,35 @@ def main(args=None):
         epoch_loss = []
 
         for iter_num, data in enumerate(dataloader_train):
-            # print(data['annot']['labels'])
-            # print("@"*50)
-            print(data["img"])
-            print(data["annot"])
-            images = [torch.tensor(i,dtype=double) for i in data['img'].cuda().float()]
-            annots = data["annot"]
-            try:
-                optimizer.zero_grad()
+            #images = [torch.tensor(i, dtype=torch.float).cuda() for i in data['img'].cuda().float()]
+            images = []
+            targets = []
+            for i in range(len(data["annot"])):
+                data["annot"][i]["labels"] = torch.tensor(data["annot"][i]["labels"],dtype=torch.int64)
+                d = {}
+                d["labels"] = data["annot"][i]["labels"].reshape((1,data["annot"][i]["labels"].shape[0]))[0].cuda()
+                d["boxes"] = torch.tensor(data["annot"][i]["boxes"],dtype=torch.float).cuda()
+                print(d["boxes"])
+                print("="*50)
+                if d["boxes"].shape[0] != 0:
+                    targets.append(d)
+                    images.append(data['img'][i].float().cuda())
+            output = cnn3(images, targets)
+            print(output)
+            print("="*50)
+            if iter_num == 50:
+                break
+            
+            torch.nn.utils.clip_grad_norm_(cnn3.parameters(), 0.1)
 
-                if torch.cuda.is_available():
-                    # classification_loss, regression_loss = cnn3([i for i in data['img'].cuda().float()], [{"boxes":data["annot"]["boxes"][i],"labels":data["annot"]["labels"][i]} for i in range(data["annot"]["boxes"].shape[0])]))
-                    output = cnn3(images, annots)
-                else:
-                    classification_loss, regression_loss = cnn3([i for i in data['img'].float()], [{"boxes":i["boxes"],"labels":i["labels"]} for i in data['annot']])
-                classification_loss = classification_loss.mean()
-                regression_loss = regression_loss.mean()
-
-                loss = classification_loss + regression_loss
-
-                if bool(loss == 0):
-                    continue
-
-                loss.backward()
-
-                torch.nn.utils.clip_grad_norm_(cnn3.parameters(), 0.1)
-
-                optimizer.step()
-
-                loss_hist.append(float(loss))
-
-                epoch_loss.append(float(loss))
-
-                print(
-                    'Epoch: {} | Iteration: {} | Classification loss: {:1.5f} | Regression loss: {:1.5f} | Running loss: {:1.5f}'.format(
-                        epoch_num, iter_num, float(classification_loss), float(regression_loss), np.mean(loss_hist)))
-
-                del classification_loss
-                del regression_loss
-            except Exception as e:
-                print(e)
-                exit()
-                continue
-
+            optimizer.step()
         if parser.dataset == 'coco':
 
             print('Evaluating dataset')
 
             coco_eval.evaluate_coco(dataset_val, cnn3)
-
-        elif parser.dataset == 'csv' and parser.csv_val is not None:
-
-            print('Evaluating dataset')
-
-            mAP = csv_eval.evaluate(dataset_val, cnn3)
-
-        scheduler.step(np.mean(epoch_loss))
-
-        torch.save(cnn3.module, '{}_cnn3_460*640_{}.pt'.format(parser.dataset, epoch_num))
-
-    cnn3.eval()
-
-    torch.save(cnn3, 'high_model_final.pt')
-    
-
+#            loss_hist.append(float(loss))
+#            epoch_loss.append(float(loss))
+                
 if __name__ == '__main__':
     main()
