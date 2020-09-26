@@ -111,8 +111,8 @@ def main(args=None):
                                         transform=transforms.Compose([Normalizer(), Augmenter(), Resizer([0,0])]))
         dataset_val = CocoDataset(parser.coco_path, set_name='val2017',
                                       transform=transforms.Compose([Normalizer(), Resizer([0,0])]))
-        sampler_val = AspectRatioBasedSampler(dataset_val, batch_size=1, drop_last=False)
-        dataloader_val = DataLoader(dataset_val, num_workers=3, collate_fn=collater, batch_sampler=sampler_val)
+    sampler_val = AspectRatioBasedSampler(dataset_val, batch_size=1, drop_last=False)
+    dataloader_val = DataLoader(dataset_val, num_workers=3, collate_fn=collater, batch_sampler=sampler_val)
     backbone = FractalNet(80, BasicBlock, BigBlock,True)
     images = []
     targets = []
@@ -135,7 +135,7 @@ def main(args=None):
 
     model = model.float()
     model.eval()
-    coco_eval.evaluate_coco(dataset_val, model)
+    coco_eval.evaluate_coco(dataloader_val, model)
 
     print(output) 
 
