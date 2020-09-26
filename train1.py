@@ -131,42 +131,24 @@ def main(args=None):
                 d = {}
                 d["labels"] = data["annot"][i]["labels"].reshape((1,data["annot"][i]["labels"].shape[0]))[0].cuda()
                 d["boxes"] = torch.tensor(data["annot"][i]["boxes"],dtype=torch.float).cuda()
-            #    print(d["boxes"])
-            #    print("="*50)
                 if d["boxes"].shape[0] != 0:
                     targets.append(d)
                     images.append(data['img'][i].float().cuda())
             output = cnn3(images, targets)
-            #print(output)
-            #print("="*50)
-            if iter_num == 2:
+            if iter_num == 50:
                 break
             
             torch.nn.utils.clip_grad_norm_(cnn3.parameters(), 0.1)
 
             optimizer.step()
         cnn3.eval()
-        for iter_num ,data in enumerate(dataloader_val):
-            images = []
-            targets = []
-            for i in range(len(data["annot"])):
-                data["annot"][i]["labels"] = torch.tensor(data["annot"][i]["labels"],dtype=torch.int64)
-                d = {}
-                d["labels"] = data["annot"][i]["labels"].reshape((1,data["annot"][i]["labels"].shape[0]))[0].cuda()
-                d["boxes"] = torch.tensor(data["annot"][i]["boxes"],dtype=torch.float).cuda()
-            #    print(d["boxes"])
-            #    print("="*50)
-                if d["boxes"].shape[0] != 0:
-                    targets.append(d)
-                    images.append(data['img'][i].float().cuda())
-            #print(cnn3(images))
- #       if parser.dataset == 'coco':
+        if parser.dataset == 'coco':
 
- #           print('Evaluating dataset')
+            print('Evaluating dataset')
 
-#            coco_eval.evaluate_coco(dataset_val, cnn3)
-#            loss_hist.append(float(loss))
-#            epoch_loss.append(float(loss))
+            coco_eval.evaluate_coco(dataloader_val, cnn3)
+            # loss_hist.append(float(loss))
+            # epoch_loss.append(float(loss))
                 
 if __name__ == '__main__':
     main()
