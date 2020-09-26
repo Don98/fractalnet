@@ -2,6 +2,7 @@ import torch.nn as nn
 import torch
 import math
 import torch.utils.model_zoo as model_zoo
+from torchvision
 from torchvision.ops import nms
 from fractal.utils import BasicBlock, BigBlock, Bottleneck, BBoxTransform, ClipBoxes
 from fractal.anchors import Anchors
