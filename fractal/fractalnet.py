@@ -75,7 +75,9 @@ def Fractalnet(num_classes, pretrained=False, istrain = True,**kwargs):
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
     """
-    backbone = FractalNet(num_classes, BasicBlock, BigBlock,istrain, **kwargs)
+    # backbone = FractalNet(num_classes, BasicBlock, BigBlock,istrain, **kwargs)
+    backbone = torchvision.models.mobilenet_v2(pretrained=True).features
+    backbone.out_channels = 1280
     model = FasterRCNN(backbone,num_classes=num_classes)
     # if pretrained:
         # model.load_state_dict(model_zoo.load_url(model_urls['resnet18'], model_dir='.'), strict=False)
