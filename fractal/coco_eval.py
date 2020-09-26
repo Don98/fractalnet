@@ -28,7 +28,7 @@ def evaluate_coco(dataset, model, threshold=0.05):
             print(model(images,targets))
             if iter_num == 50:
                 continue
-            
+            '''
             if torch.cuda.is_available():
                 scores, labels, boxes = model(data['img'].permute(2, 0, 1).cuda().float().unsqueeze(dim=0))
             else:
@@ -91,5 +91,5 @@ def evaluate_coco(dataset, model, threshold=0.05):
         coco_eval.summarize()
 
         model.train()
-
+'''
         return
