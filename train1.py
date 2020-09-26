@@ -135,6 +135,7 @@ def main(args=None):
                     targets.append(d)
                     images.append(data['img'][i].float().cuda())
             output = cnn3(images, targets)
+            print(output)
             if iter_num == 50:
                 break
             
@@ -142,6 +143,8 @@ def main(args=None):
 
             optimizer.step()
         cnn3.eval()
+        
+        print("="*50)
         if parser.dataset == 'coco':
 
             print('Evaluating dataset')
