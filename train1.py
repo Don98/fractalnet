@@ -135,7 +135,12 @@ def main(args=None):
                     targets.append(d)
                     images.append(data['img'][i].float().cuda())
             output = cnn3(images, targets)
-            print(output)
+            loss_classifier  = output["loss_classifier"].cuda()
+            loss_box_req     = output["loss_box_req"].cuda()
+            loss_rpn_box_req = output["loss_rpn_box_req"].cuda()
+            loss_objectness  = output["loss_objectness"].cuda()
+            loss = loss_classifier + loss_box_req + loss_rpn_box_req + loss_objectness
+            loss.backward()
             if iter_num == 50:
                 break
             
