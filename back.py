@@ -114,16 +114,16 @@ def main(args=None):
     sampler_val = AspectRatioBasedSampler(dataset_val, batch_size=1, drop_last=False)
     dataloader_val = DataLoader(dataset_val, num_workers=3, collate_fn=collater, batch_sampler=sampler_val)
     backbone = FractalNet(80, BasicBlock, BigBlock,True)
-    images = []
-    targets = []
-    for i in range(2):
-        d = {}
-        d['boxes'] = torch.tensor(torch.load("boxes"+str(i) + ".pt"),dtype=torch.float).cuda()
-        d["labels"] = torch.load("labels" + str(i) + ".pt")
+    # images = []
+    # targets = []
+    # for i in range(2):
+        # d = {}
+        # d['boxes'] = torch.tensor(torch.load("boxes"+str(i) + ".pt"),dtype=torch.float).cuda()
+        # d["labels"] = torch.load("labels" + str(i) + ".pt")
 
-        d["labels"] = d["labels"].reshape((1,d["labels"].shape[0]))[0].cuda()
-        targets.append(d)
-        images.append(torch.tensor(torch.load("img_" + str(i) + ".pt"),dtype=torch.float).cuda())
+        # d["labels"] = d["labels"].reshape((1,d["labels"].shape[0]))[0].cuda()
+        # targets.append(d)
+        # images.append(torch.tensor(torch.load("img_" + str(i) + ".pt"),dtype=torch.float).cuda())
     model = FasterRCNN(backbone,num_classes=80)
     model = model.cuda()
 
