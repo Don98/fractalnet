@@ -50,29 +50,29 @@ class BigBlock(nn.Module):
         self.last_one = last_one
         self.drop_ratio = drop_ratio
         #第一列
-        self.con0_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv0_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         
         #最上面一块        
-        self.con2_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
-        self.con3_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
-        self.con3_1 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv2_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv3_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv3_1 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         
         #第二块
-        self.con2_1 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
-        self.con3_2 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
-        self.con3_3 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
-        self.con1_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv2_1 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv3_2 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv3_3 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv1_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
                 
         #第三块
-        self.con2_2 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
-        self.con3_4 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
-        self.con3_5 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
-        self.con1_1 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv2_2 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv3_4 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv3_5 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv1_1 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
       
         #第四块
-        self.con2_3 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
-        self.con3_6 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
-        self.con3_7 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv2_3 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv3_6 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
+        self.conv3_7 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
       
         self.maxpool  = nn.MaxPool2d(kernel_size=2, stride=2, padding=1)
         self.maxpool1 = nn.MaxPool2d(kernel_size=7, stride=7, padding=1)
@@ -80,38 +80,38 @@ class BigBlock(nn.Module):
     def forward(self, x):
         residual = x
         #第一列
-        x_con0_0 = self.con0_0(x)
+        x_con0_0 = self.conv0_0(x)
         
         #最上面一块    
-        x_con2_0 = self.con2_0(x)
-        x_con3_0 = self.con3_0(x)
-        x_con3_1 = self.con3_1(x_con3_0)
+        x_con2_0 = self.conv2_0(x)
+        x_con3_0 = self.conv3_0(x)
+        x_con3_1 = self.conv3_1(x_con3_0)
         
         # x_con3_1_plus = (x_con3_1 + x_con2_0) / 2
         x_con3_1_plus = drop_path([x_con3_1,x_con2_0],self.drop_ratio,2)
         
         #第二块    
-        x_con2_1 = self.con2_1(x_con3_1_plus)
-        x_con3_2 = self.con3_2(x_con3_1_plus)
-        x_con3_3 = self.con3_3(x_con3_2)
-        x_con1_0 = self.con1_0(x)
+        x_con2_1 = self.conv2_1(x_con3_1_plus)
+        x_con3_2 = self.conv3_2(x_con3_1_plus)
+        x_con3_3 = self.conv3_3(x_con3_2)
+        x_con1_0 = self.conv1_0(x)
         
         # x_con3_3_plus = (x_con3_3 + x_con2_1 + x_con1_0) / 3
         x_con3_3_plus = drop_path([x_con3_3 , x_con2_1 , x_con1_0],self.drop_ratio,3)
         
         #第三块    
-        x_con1_1 = self.con1_1(x_con3_3_plus)
-        x_con2_2 = self.con2_2(x_con3_3_plus)
-        x_con3_4 = self.con3_4(x_con3_3_plus)
-        x_con3_5 = self.con3_5(x_con3_4)
+        x_con1_1 = self.conv1_1(x_con3_3_plus)
+        x_con2_2 = self.conv2_2(x_con3_3_plus)
+        x_con3_4 = self.conv3_4(x_con3_3_plus)
+        x_con3_5 = self.conv3_5(x_con3_4)
         
         # x_con3_5_plus = (x_con3_5 + x_con2_2) / 2
         x_con3_5_plus = drop_path([x_con3_5 , x_con2_2],self.drop_ratio,2)
         
         #第四块    
-        x_con2_3 = self.con2_3(x_con3_5_plus)
-        x_con3_6 = self.con3_6(x_con3_5_plus)
-        x_con3_7 = self.con3_7(x_con3_6)
+        x_con2_3 = self.conv2_3(x_con3_5_plus)
+        x_con3_6 = self.conv3_6(x_con3_5_plus)
+        x_con3_7 = self.conv3_7(x_con3_6)
         
         if self.last_one:
             x_con3_31_plus = drop_path([x_con0_0 , x_con1_1 , x_con2_3 , x_con3_7],self.drop_ratio,4)

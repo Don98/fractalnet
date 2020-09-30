@@ -9,6 +9,7 @@ from fractal.anchors import Anchors
 from fractal import losses
 from torchvision.models.detection import FasterRCNN
 import torchsnooper
+from load_dic import load_dict
 # @torchsnooper.snoop()
 class FractalNet(nn.Module):
 
@@ -78,9 +79,9 @@ def Fractalnet(num_classes, pretrained=False, istrain = True,**kwargs):
     """
     # backbone = FractalNet(num_classes, BasicBlock, BigBlock,istrain, **kwargs)
     backbone = torchvision.models.mobilenet_v2(pretrained=True).features
+    state_dict = load_dict()
+    backbone.load_state_dict(state_dict,strict=True)
     backbone.out_channels = 1280
     model = FasterRCNN(backbone,num_classes=num_classes)
-    # if pretrained:
-        # model.load_state_dict(model_zoo.load_url(model_urls['resnet18'], model_dir='.'), strict=False)
     return model
 
