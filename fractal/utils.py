@@ -10,6 +10,15 @@ def conv3x3(in_planes, out_planes, stride=1,kernel_size=3,padding=1):
     return nn.Conv2d(in_planes, out_planes, kernel_size=kernel_size, stride=stride,
                      padding=padding, bias=False)
 
+def drop_path(feature,drop_ratio,nums):
+    num = 0
+    while(num):
+        rand_num = torch.rand((nums))
+        num = torch.sum(rand_num)
+    rand_num = rand_num > drop_ratio
+    new_nums = torch.sum(rand_num)
+    new_feature = feature[rand_num]
+    return sum(new_feature)
 
 class BasicBlock(nn.Module):
     expansion = 1
@@ -31,11 +40,6 @@ class BasicBlock(nn.Module):
         out = self.drop1(out)
         out = self.relu(out)
         out = self.bn1(out)
-        # print(self.conv1.weight.data.size())
-        # print(self.conv1.bias.data.size())
-        # print("*"*50)
-        # print(self.conv1.weight.data)
-        # print(self.conv1.bias.data)
         return out
 
 
@@ -44,6 +48,7 @@ class BigBlock(nn.Module):
     def __init__(self, inplanes, planes, stride = 1, kernel_size = 3, padding=1, drop_ratio=0.3,last_one = False):
         super(BigBlock, self).__init__()
         self.last_one = last_one
+        self.drop_ratio = drop_ratio
         #第一列
         self.con0_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         
@@ -82,7 +87,8 @@ class BigBlock(nn.Module):
         x_con3_0 = self.con3_0(x)
         x_con3_1 = self.con3_1(x_con3_0)
         
-        x_con3_1_plus = (x_con3_1 + x_con2_0) / 2
+        # x_con3_1_plus = (x_con3_1 + x_con2_0) / 2
+        x_con3_1_plus = drop_path([x_con3_1,x_con2_0],self.drop_ratio,2)
         
         #第二块    
         x_con2_1 = self.con2_1(x_con3_1_plus)
@@ -90,7 +96,8 @@ class BigBlock(nn.Module):
         x_con3_3 = self.con3_3(x_con3_2)
         x_con1_0 = self.con1_0(x)
         
-        x_con3_3_plus = (x_con3_3 + x_con2_1 + x_con1_0) / 3
+        # x_con3_3_plus = (x_con3_3 + x_con2_1 + x_con1_0) / 3
+        x_con3_3_plus = drop_path([x_con3_3 , x_con2_1 , x_con1_0],self.drop_ratio,3)
         
         #第三块    
         x_con1_1 = self.con1_1(x_con3_3_plus)
@@ -98,7 +105,8 @@ class BigBlock(nn.Module):
         x_con3_4 = self.con3_4(x_con3_3_plus)
         x_con3_5 = self.con3_5(x_con3_4)
         
-        x_con3_5_plus = (x_con3_5 + x_con2_2) / 2
+        # x_con3_5_plus = (x_con3_5 + x_con2_2) / 2
+        x_con3_5_plus = drop_path([x_con3_5 , x_con2_2],self.drop_ratio,2)
         
         #第四块    
         x_con2_3 = self.con2_3(x_con3_5_plus)
@@ -106,14 +114,16 @@ class BigBlock(nn.Module):
         x_con3_7 = self.con3_7(x_con3_6)
         
         if self.last_one:
-            x_con3_31_plus = (x_con0_0 + x_con1_1 + x_con2_3 + x_con3_7) / 4
+            x_con3_31_plus = drop_path([x_con0_0 , x_con1_1 , x_con2_3 , x_con3_7],self.drop_ratio,4)
+            # x_con3_31_plus = (x_con0_0 + x_con1_1 + x_con2_3 + x_con3_7) / 4
             return self.maxpool1(x_con3_31_plus)
         else:
             pool0_0 = self.maxpool(x_con0_0)
             pool1_1 = self.maxpool(x_con1_1)
             pool2_3 = self.maxpool(x_con2_3)
             pool3_7 = self.maxpool(x_con3_7)
-            return (pool0_0 + pool1_1 + pool2_3 + pool3_7) / 4
+            x_con3_31_plus = drop_path([x_con0_0 , x_con1_1 , x_con2_3 , x_con3_7],self.drop_ratio,4)
+            return x_con3_31_plus
 
         # return out
 
