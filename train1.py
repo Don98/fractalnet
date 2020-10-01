@@ -159,7 +159,9 @@ def main(args=None):
             optimizer.step()
             print("iter_num is : " , iter_num,"\tloss1 : " , loss1 , "\tloss2 : ",loss2)
         cnn3.eval()
-        
+        torch.save(cnn3, 'model'+str(epoch_num)+'.pt')
+        cnn3.train()
+
         # print("="*50)
         if parser.dataset == 'coco':
 
