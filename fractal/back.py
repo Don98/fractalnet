@@ -8,6 +8,7 @@ from fractal.anchors import Anchors
 from fractal import losses
 from torchvision.models.detection import FasterRCNN
 import torchsnooper
+from fractal.load_dic import load_dict
 @torchsnooper.snoop()
 class FractalNet(nn.Module):
 

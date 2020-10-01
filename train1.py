@@ -86,10 +86,8 @@ def main(args=None):
         dataloader_val = DataLoader(dataset_val, num_workers=1, collate_fn=collater, batch_sampler=sampler_val)
     print("Num classes : ", dataset_train.num_classes())
     # Create the model
-    if parser.depth == 0:
-        cnn3 = fractalnet.Fractalnet(num_classes=dataset_train.num_classes(), pretrained=True,istrain=True)
-    else:
-        raise ValueError('Unsupported model depth, must be one of 18, 34, 50, 101, 152')
+
+    cnn3 = fractalnet.Fractalnet(num_classes=dataset_train.num_classes(), pretrained=True,istrain=True)
     
     use_gpu = True
 
@@ -131,25 +129,38 @@ def main(args=None):
                 d = {}
                 d["labels"] = data["annot"][i]["labels"].reshape((1,data["annot"][i]["labels"].shape[0]))[0].cuda()
                 d["boxes"] = torch.tensor(data["annot"][i]["boxes"],dtype=torch.float).cuda()
+                torch.save(d["labels"],"labels_"+str(i) + ".pt")
+                torch.save(d["boxes"],"boxes_" + str(i) + ".pt")
+                torch.save(data["img"][i],"img_"+str(i) + ".pt")
+                #print("labels:",d["labels"])
+                #print("-"*50)
+                #print("boxes: ",d["boxes"])
+                #print("-"*50)
                 if d["boxes"].shape[0] != 0:
                     targets.append(d)
                     images.append(data['img'][i].float().cuda())
             output = cnn3(images, targets)
+            #print(output)
+            #print("="*50)
             loss_classifier  = output["loss_classifier"].cuda()
-            loss_box_req     = output["loss_box_req"].cuda()
-            loss_rpn_box_req = output["loss_rpn_box_req"].cuda()
+            loss_box_reg     = output["loss_box_reg"].cuda()
+            loss_rpn_box_reg = output["loss_rpn_box_reg"].cuda()
             loss_objectness  = output["loss_objectness"].cuda()
-            loss = loss_classifier + loss_box_req + loss_rpn_box_req + loss_objectness
-            loss.backward()
-            if iter_num == 50:
-                break
+            loss1 = loss_classifier + loss_box_reg
+            loss2 = loss_rpn_box_reg + loss_objectness
+            # loss.backward()
+            loss_classifier.backward()
+            loss_box_reg.backward()
+            loss_rpn_box_reg.backward()
+            loss_objectness.backward()
             
             torch.nn.utils.clip_grad_norm_(cnn3.parameters(), 0.1)
 
             optimizer.step()
+            print("iter_num is : " , iter_num,"\tloss1 : " , loss1 , "\tloss2 : ",loss2)
         cnn3.eval()
         
-        print("="*50)
+        # print("="*50)
         if parser.dataset == 'coco':
 
             print('Evaluating dataset')

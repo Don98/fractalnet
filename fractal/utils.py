@@ -12,6 +12,7 @@ def conv3x3(in_planes, out_planes, stride=1,kernel_size=3,padding=1):
 
 def drop_path(feature,drop_ratio,nums):
     num = 0
+    rand_num = []
     while(num):
         rand_num = torch.rand((nums))
         num = torch.sum(rand_num)
