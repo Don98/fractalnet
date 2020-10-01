@@ -2,7 +2,7 @@ from torch import from_numpy
 import torch
 import pickle as pkl
 def load_dict():
-    with open('../weights1.pkl', 'rb') as wp:
+    with open('weights1.pkl', 'rb') as wp:
         name_weights = pkl.load(wp)
     state_dict = {}
     state_dict['convH_0.weight'] = torch.from_numpy(name_weights['convH_0']['weight'])
