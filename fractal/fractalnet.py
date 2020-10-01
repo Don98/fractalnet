@@ -81,7 +81,7 @@ def Fractalnet(num_classes, pretrained=False, istrain = True,**kwargs):
     backbone = torchvision.models.mobilenet_v2(pretrained=True).features
     state_dict = load_dict()
     torch.save(backbone.state_dict(), "backbone.pth")
-    backbone.load_state_dict(state_dict,strict=True)
+    backbone.load_state_dict(state_dict,strict=False)
     backbone.out_channels = 1280
     model = FasterRCNN(backbone,num_classes=num_classes)
     return model
