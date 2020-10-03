@@ -16,7 +16,7 @@ from torch.utils.data import DataLoader
 from fractal import coco_eval
 from fractal import csv_eval
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "5"
 assert torch.__version__.split('.')[0] == '1'
 import torchsnooper
 print('CUDA available: {}'.format(torch.cuda.is_available()))
@@ -31,6 +31,7 @@ def main(args=None):
     parser.add_argument('--csv_classes', help='Path to file containing class list (see readme)')
     parser.add_argument('--csv_val', help='Path to file containing validation annotations (optional, see readme)')
 
+    parser.add_argument('--depth', help='Resnet depth, must be one of 18, 34, 50, 101, 152', type=int, default=101)
     parser.add_argument('--epochs', help='Number of epochs', type=int, default=100)
 
     parser = parser.parse_args(args)
@@ -138,6 +139,10 @@ def main(args=None):
                 if d["boxes"].shape[0] != 0:
                     targets.append(d)
                     images.append(data['img'][i].float().cuda())
+            if targets == []:
+                continue
+            #if iter_num == 200:
+            #    break
             output = cnn3(images, targets)
             #print(output)
             #print("="*50)
@@ -147,16 +152,17 @@ def main(args=None):
             loss_objectness  = output["loss_objectness"].cuda()
             loss1 = loss_classifier + loss_box_reg
             loss2 = loss_rpn_box_reg + loss_objectness
-            # loss.backward()
-            loss_classifier.backward()
-            loss_box_reg.backward()
-            loss_rpn_box_reg.backward()
-            loss_objectness.backward()
+            loss1.backward()
+            #loss2.backward()
+            #loss_classifier.backward()
+            #loss_box_reg.backward()
+            #loss_rpn_box_reg.backward()
+            #loss_objectness.backward()
             
             torch.nn.utils.clip_grad_norm_(cnn3.parameters(), 0.1)
 
             optimizer.step()
-            print("iter_num is : " , iter_num,"\tloss1 : " , loss1 , "\tloss2 : ",loss2)
+            print("iter_num is : " , iter_num,"\tloss1 : " , loss1.data , "\tloss_object : ",loss_objectness.data ,"\trpn box reg loss: ",loss_rpn_box_reg.data)
         cnn3.eval()
         torch.save(cnn3, 'model'+str(epoch_num)+'.pt')
         cnn3.train()
