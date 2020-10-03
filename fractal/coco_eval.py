@@ -25,17 +25,16 @@ def evaluate_coco(dataset, model, threshold=0.05):
                 if d["boxes"].shape[0] != 0:
                     targets.append(d)
                     images.append(data['img'][i].float().cuda())
-            print(targets)
-            print("-"*50)
-            print(model(images,targets))
-            print("="*50)
-            if iter_num == 100:
+            # print(targets)
+            # print("-"*50)
+            # print(model(images,targets))
+            # print("="*50)
+            if iter_num == 10:
                 break
-            '''
             if torch.cuda.is_available():
-                scores, labels, boxes = model(data['img'].permute(2, 0, 1).cuda().float().unsqueeze(dim=0))
+                scores, labels, boxes = model(images,targets)
             else:
-                scores, labels, boxes = model(data['img'].permute(2, 0, 1).float().unsqueeze(dim=0))
+                scores, labels, boxes = model(images,targets)
             scores = scores.cpu()
             labels = labels.cpu()
             boxes  = boxes.cpu()
@@ -75,7 +74,7 @@ def evaluate_coco(dataset, model, threshold=0.05):
 
             # print progress
             print('{}/{}'.format(index, len(dataset)), end='\r')
-
+        print(len(results))
         if not len(results):
             return
 
