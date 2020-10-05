@@ -31,7 +31,7 @@ def main(args=None):
     parser = parser.parse_args(args)
 
     dataset_val = CocoDataset(parser.coco_path, set_name='val2017',
-                              transform=transforms.Compose([Normalizer(), Resizer()]))
+                              transform=transforms.Compose([Normalizer(), Resizer([0,0])]))
 
     # Create the model
     cnn3 = fractalnet.Fractalnet(num_classes=dataset_val.num_classes(), pretrained=True,istrain=True)
