@@ -34,7 +34,7 @@ def main(args=None):
                               transform=transforms.Compose([Normalizer(), Resizer()]))
 
     # Create the model
-    cnn3 = fractalnet.Fractalnet(num_classes=dataset_train.num_classes(), pretrained=True,istrain=True)
+    cnn3 = fractalnet.Fractalnet(num_classes=dataset_val.num_classes(), pretrained=True,istrain=True)
     
     use_gpu = True
 
