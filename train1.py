@@ -140,7 +140,7 @@ def main(args=None):
                     images.append(data['img'][i].float().cuda())
             if targets == []:
                 continue
-            #if iter_num == 200:
+            #if iter_num == 20:
             #    break
             output = cnn3(images, targets)
             #print(output)
@@ -162,8 +162,9 @@ def main(args=None):
 
             optimizer.step()
             print("iter_num is : " , iter_num,"\tloss1 : " , loss1.data , "\tloss_object : ",loss_objectness.data ,"\trpn box reg loss: ",loss_rpn_box_reg.data)
+        #cnn3.eval()
+        torch.save(cnn3.state_dict(), 'model'+str(epoch_num)+'.pth')
         cnn3.eval()
-        torch.save(cnn3, 'model'+str(epoch_num)+'.pt')
         cnn3.train()
 
         # print("="*50)
@@ -171,7 +172,7 @@ def main(args=None):
 
             print('Evaluating dataset')
 
-            coco_eval.evaluate_coco(dataloader_val, cnn3)
+            coco_eval.evaluate_coco(dataset_val, cnn3)
             # loss_hist.append(float(loss))
             # epoch_loss.append(float(loss))
                 

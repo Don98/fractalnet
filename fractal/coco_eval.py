@@ -1,7 +1,7 @@
 from pycocotools.cocoeval import COCOeval
 import json
 import torch
-
+import numpy as np
 
 def evaluate_coco(dataset, model, threshold=0.05):
     
@@ -12,11 +12,15 @@ def evaluate_coco(dataset, model, threshold=0.05):
         # start collecting results
         results = []
         image_ids = []
-
+        for i in dataset:
+            print(i)
+            exit()
         for iter_num, data in enumerate(dataset):
             scale = data['scale']
+            print(scale)
             images = []
             targets = []
+
             for i in range(len(data["annot"])):
                 data["annot"][i]["labels"] = torch.tensor(data["annot"][i]["labels"],dtype=torch.int64)
                 d = {}
@@ -25,23 +29,20 @@ def evaluate_coco(dataset, model, threshold=0.05):
                 if d["boxes"].shape[0] != 0:
                     targets.append(d)
                     images.append(data['img'][i].float().cuda())
-            # print(targets)
-            # print("-"*50)
-            # print(model(images,targets))
-            # print("="*50)
             if iter_num == 10:
                 break
-            if torch.cuda.is_available():
-                scores, labels, boxes = model(images,targets)
-            else:
-                scores, labels, boxes = model(images,targets)
-            scores = scores.cpu()
-            labels = labels.cpu()
-            boxes  = boxes.cpu()
-
+            prediction = model(images,targets)
+            print(prediction)
+            scores = []
+            labels = []
+            boxes  = []
+            for i in prediction:
+                scores.append(i["scores"])
+                labels.append(i["labels"])
+                boxes.append(i["boxes"])
             # correct boxes for image scale
             boxes /= scale
-
+            print(boxes)
             if boxes.shape[0] > 0:
                 # change to (x, y, w, h) (MS COCO standard)
                 boxes[:, 2] -= boxes[:, 0]
