@@ -12,50 +12,34 @@ def evaluate_coco(dataset, model, threshold=0.05):
         # start collecting results
         results = []
         image_ids = []
-
+        num = 0
         for index in range(len(dataset)):
             data = dataset[index]
             scale = data['scale']
             images = []
             targets = []
             
-            images.append(data["img"].cuda())
+            images.append(data["img"].permute(2, 0, 1).cuda())
+            #images.append(data["img"].cuda())
             d = {}
-            d["labels"] = data["annot"]["labels"].reshape((1,data["annot"]["labels"].shape[0]))[0]
-            d["boxes"] = torch.tensor(data["annot"]["boxes"],dtype=torch.float)
+            d["labels"] = torch.tensor(data["annot"]["labels"].reshape((1,data["annot"]["labels"].shape[0]))[0],dtype=torch.int64)
+            d["boxes"] = torch.tensor(data["annot"]["boxes"],dtype=torch.float).cuda()
             targets.append(d)
             prediction = model(images,targets)
-            print(prediction)
-            exit()
-            
-        for iter_num, data in enumerate(dataset):
-            scale = data['scale']
-            print(scale)
-            images = []
-            targets = []
+            # print(prediction)
+            # if prediction[0]["boxes"].shape[0] == 0:
+                # num += 1
+            # print("="*50)
+            # if index == 500:
+                # print("The num is :", num)
+                # exit()            
+            scores = prediction[0]["scores"]
+            labels = prediction[0]["labels"]
+            boxes  = prediction[0]["boxes"]
 
-            for i in range(len(data["annot"])):
-                data["annot"][i]["labels"] = torch.tensor(data["annot"][i]["labels"],dtype=torch.int64)
-                d = {}
-                d["labels"] = data["annot"][i]["labels"].reshape((1,data["annot"][i]["labels"].shape[0]))[0].cuda()
-                d["boxes"] = torch.tensor(data["annot"][i]["boxes"],dtype=torch.float).cuda()
-                if d["boxes"].shape[0] != 0:
-                    targets.append(d)
-                    images.append(data['img'][i].float().cuda())
-            if iter_num == 10:
-                break
-            prediction = model(images,targets)
-            print(prediction)
-            scores = []
-            labels = []
-            boxes  = []
-            for i in prediction:
-                scores.append(i["scores"])
-                labels.append(i["labels"])
-                boxes.append(i["boxes"])
-            # correct boxes for image scale
             boxes /= scale
             print(boxes)
+            print(scale)
             if boxes.shape[0] > 0:
                 # change to (x, y, w, h) (MS COCO standard)
                 boxes[:, 2] -= boxes[:, 0]
