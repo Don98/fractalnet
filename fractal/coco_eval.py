@@ -12,9 +12,26 @@ def evaluate_coco(dataset, model, threshold=0.05):
         # start collecting results
         results = []
         image_ids = []
-        for i in dataset:
-            print(i)
+
+        for index in range(len(dataset)):
+            data = dataset[index]
+            scale = data['scale']
+            print(data["annot"])
+            print(len(data["annot"]))
             exit()
+            images = []
+            targets = []
+            
+            for i in range(len(data["scale"])):
+                data["annot"][i]["labels"] = torch.tensor(data["annot"][i]["labels"],dtype=torch.int64)
+                d = {}
+                d["labels"] = data["annot"][i]["labels"].reshape((1,data["annot"][i]["labels"].shape[0]))[0].cuda()
+                d["boxes"] = torch.tensor(data["annot"][i]["boxes"],dtype=torch.float).cuda()
+                if d["boxes"].shape[0] != 0:
+                    targets.append(d)
+                    images.append(data['img'][i].float().cuda())
+            exit()
+            
         for iter_num, data in enumerate(dataset):
             scale = data['scale']
             print(scale)
