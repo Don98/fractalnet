@@ -21,8 +21,8 @@ def evaluate_coco(dataset, model, threshold=0.05):
             
             images.append(data["img"].cuda())
             d = {}
-            d["labels"] = data["annot"]["labels"].reshape((1,data["annot"]["labels"].shape[0]))[0].cuda()
-            d["boxes"] = torch.tensor(data["annot"]["boxes"],dtype=torch.float).cuda()
+            d["labels"] = data["annot"]["labels"].reshape((1,data["annot"]["labels"].shape[0]))[0]
+            d["boxes"] = torch.tensor(data["annot"]["boxes"],dtype=torch.float)
             targets.append(d)
             prediction = model(images,targets)
             print(prediction)
