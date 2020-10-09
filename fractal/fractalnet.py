@@ -72,8 +72,8 @@ def Fractalnet(num_classes, pretrained=False, istrain = True,**kwargs):
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
     """
-    # backbone = FractalNet(num_classes, BasicBlock, BigBlock,istrain, **kwargs)
-    backbone = torchvision.models.mobilenet_v2(pretrained=True).features
+    backbone = FractalNet(num_classes, BasicBlock, BigBlock,istrain, **kwargs)
+    # backbone = torchvision.models.mobilenet_v2(pretrained=True).features
     state_dict = load_dict()
     torch.save(backbone.state_dict(), "backbone.pth")
     backbone.load_state_dict(state_dict,strict=False)
