@@ -55,15 +55,26 @@ class FractalNet(nn.Module):
 
         img_batch = inputs
         x = self.convH_0(img_batch)
+        del img_batch
+        torch.cuda.empty_cache()
         x = self.drop1(x)
         x = self.relu(x)
         x = self.bn1(x)
         x = self.maxpoolH_0(x)
-        
+
+
         x1 = self.the_block1(x)
+        del x
+        torch.cuda.empty_cache()
         x2 = self.the_block2(x1)
+        del x1
+        torch.cuda.empty_cache()
         x3 = self.the_block3(x2)
+        del x2
+        torch.cuda.empty_cache()
         x4 = self.the_block4(x3)
+        del x3
+        torch.cuda.empty_cache()
         return x4
 
 
@@ -77,7 +88,7 @@ def Fractalnet(num_classes, pretrained=False, istrain = True,**kwargs):
     state_dict = load_dict()
     torch.save(backbone.state_dict(), "backbone.pth")
     backbone.load_state_dict(state_dict,strict=False)
-    backbone.out_channels = 1280
+    backbone.out_channels = 1024
     model = FasterRCNN(backbone,num_classes=num_classes)
     return model
 

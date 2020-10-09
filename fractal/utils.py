@@ -12,22 +12,22 @@ def conv3x3(in_planes, out_planes, stride=1,kernel_size=3,padding=1):
 
 def drop_path(feature,drop_ratio,nums):
     num = 0
-    rand_num = []
+    rand_num = torch.rand((nums))
     while(num):
         rand_num = torch.rand((nums))
         num = torch.sum(rand_num)
     rand_num = rand_num > drop_ratio
     new_nums = torch.sum(rand_num)
-    new_feature = feature[rand_num]
-    return sum(new_feature)
+    new_feature = torch.zeros(feature[0].shape).cuda()
+    for i in range(nums):
+        if rand_num[i]:
+            new_feature += feature[0]
+    return new_feature / new_nums
 
 class BasicBlock(nn.Module):
     expansion = 1
 
     def __init__(self, inplanes, planes, stride=1,kernel_size = 3,padding=1,drop_ratio=0.3):
-        # print("basic inplanes: ",inplanes)
-        # print("basic planes: ",planes)
-        # print("-"*50)
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride, kernel_size, padding)
         self.drop1 = nn.Dropout(drop_ratio)
@@ -38,6 +38,8 @@ class BasicBlock(nn.Module):
         residual = x
 
         out = self.conv1(x)
+        del x
+        torch.cuda.empty_cache()
         out = self.drop1(out)
         out = self.relu(out)
         out = self.bn1(out)
@@ -50,27 +52,27 @@ class BigBlock(nn.Module):
         super(BigBlock, self).__init__()
         self.last_one = last_one
         self.drop_ratio = drop_ratio
-        #ç¬¬ä¸€åˆ—
+        #µÚÒ»ÁĞ
         self.conv0_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         
-        #æœ€ä¸Šé¢ä¸€å—        
+        #×îÉÏÃæÒ»¿é        
         self.conv2_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         self.conv3_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         self.conv3_1 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         
-        #ç¬¬äºŒå—
+        #µÚ¶ş¿é
         self.conv2_1 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         self.conv3_2 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         self.conv3_3 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         self.conv1_0 = BasicBlock(inplanes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
                 
-        #ç¬¬ä¸‰å—
+        #µÚÈı¿é
         self.conv2_2 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         self.conv3_4 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         self.conv3_5 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         self.conv1_1 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
       
-        #ç¬¬å››å—
+        #µÚËÄ¿é
         self.conv2_3 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         self.conv3_6 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
         self.conv3_7 = BasicBlock(planes, planes, stride, kernel_size = 3, padding = padding , drop_ratio = drop_ratio)
@@ -80,27 +82,33 @@ class BigBlock(nn.Module):
         
     def forward(self, x):
         residual = x
-        #ç¬¬ä¸€åˆ—
+        #µÚÒ»ÁĞ
         x_con0_0 = self.conv0_0(x)
         
-        #æœ€ä¸Šé¢ä¸€å—    
+        #×îÉÏÃæÒ»¿é    
         x_con2_0 = self.conv2_0(x)
         x_con3_0 = self.conv3_0(x)
         x_con3_1 = self.conv3_1(x_con3_0)
         
+        x_con1_0 = self.conv1_0(x)
+        
         # x_con3_1_plus = (x_con3_1 + x_con2_0) / 2
         x_con3_1_plus = drop_path([x_con3_1,x_con2_0],self.drop_ratio,2)
-        
-        #ç¬¬äºŒå—    
+        del x;del x_con2_0;del x_con3_0;del x_con3_1
+        torch.cuda.empty_cache()
+        #µÚ¶ş¿é    
         x_con2_1 = self.conv2_1(x_con3_1_plus)
         x_con3_2 = self.conv3_2(x_con3_1_plus)
         x_con3_3 = self.conv3_3(x_con3_2)
-        x_con1_0 = self.conv1_0(x)
+        # x_con1_0 = self.conv1_0(x)
         
         # x_con3_3_plus = (x_con3_3 + x_con2_1 + x_con1_0) / 3
         x_con3_3_plus = drop_path([x_con3_3 , x_con2_1 , x_con1_0],self.drop_ratio,3)
+        del x_con1_0;del x_con2_1;del x_con3_2;del x_con3_3
+        torch.cuda.empty_cache()
         
-        #ç¬¬ä¸‰å—    
+        
+        #µÚÈı¿é    
         x_con1_1 = self.conv1_1(x_con3_3_plus)
         x_con2_2 = self.conv2_2(x_con3_3_plus)
         x_con3_4 = self.conv3_4(x_con3_3_plus)
@@ -108,8 +116,11 @@ class BigBlock(nn.Module):
         
         # x_con3_5_plus = (x_con3_5 + x_con2_2) / 2
         x_con3_5_plus = drop_path([x_con3_5 , x_con2_2],self.drop_ratio,2)
+        del x_con3_3_plus;del x_con2_2;del x_con3_4;del x_con3_5
+        torch.cuda.empty_cache()
         
-        #ç¬¬å››å—    
+        
+        #µÚËÄ¿é    
         x_con2_3 = self.conv2_3(x_con3_5_plus)
         x_con3_6 = self.conv3_6(x_con3_5_plus)
         x_con3_7 = self.conv3_7(x_con3_6)
@@ -117,6 +128,8 @@ class BigBlock(nn.Module):
         if self.last_one:
             x_con3_31_plus = drop_path([x_con0_0 , x_con1_1 , x_con2_3 , x_con3_7],self.drop_ratio,4)
             # x_con3_31_plus = (x_con0_0 + x_con1_1 + x_con2_3 + x_con3_7) / 4
+            del x_con3_6;del x_con2_3;del x_con3_7
+            torch.cuda.empty_cache()
             return self.maxpool1(x_con3_31_plus)
         else:
             pool0_0 = self.maxpool(x_con0_0)
@@ -124,6 +137,8 @@ class BigBlock(nn.Module):
             pool2_3 = self.maxpool(x_con2_3)
             pool3_7 = self.maxpool(x_con3_7)
             x_con3_31_plus = drop_path([x_con0_0 , x_con1_1 , x_con2_3 , x_con3_7],self.drop_ratio,4)
+            del x_con3_6;del x_con2_3;del x_con3_7
+            torch.cuda.empty_cache()
             return x_con3_31_plus
 
         # return out

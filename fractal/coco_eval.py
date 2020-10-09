@@ -38,8 +38,8 @@ def evaluate_coco(dataset, model, threshold=0.05):
             boxes  = prediction[0]["boxes"]
 
             boxes /= scale
-            print(boxes)
-            print(scale)
+            # print(boxes)
+            # print(scale)
             if boxes.shape[0] > 0:
                 # change to (x, y, w, h) (MS COCO standard)
                 boxes[:, 2] -= boxes[:, 0]

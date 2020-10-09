@@ -31,6 +31,9 @@ from torch.utils.data import DataLoader
 from fractal import coco_eval
 from fractal import csv_eval
 import os
+import time
+
+from torch.nn.parallel import DistributedDataParallel as DDP
 #@torchsnooper.snoop()
 class FractalNet(nn.Module):
 
@@ -76,19 +79,32 @@ class FractalNet(nn.Module):
 
         img_batch = inputs
         x = self.convH_0(img_batch)
+        del img_batch
+        torch.cuda.empty_cache()
         x = self.drop1(x)
         x = self.relu(x)
         x = self.bn1(x)
         x = self.maxpoolH_0(x)
-        
+
+
         x1 = self.the_block1(x)
+        del x
+        torch.cuda.empty_cache()
         x2 = self.the_block2(x1)
+        del x1
+        torch.cuda.empty_cache()
         x3 = self.the_block3(x2)
+        del x2
+        torch.cuda.empty_cache()
         x4 = self.the_block4(x3)
+        del x3
+        torch.cuda.empty_cache()
         return x4
 
-def main(args=None):
+def get_layer_param(model):
+    return sum([torch.numel(param) for param in model.parameters()])
 
+def main(args=None):
     os.environ["CUDA_VISIBLE_DEVICES"] = "5"
     
     parser = argparse.ArgumentParser(description='Simple training script for training a cnn3 network.')
@@ -101,14 +117,71 @@ def main(args=None):
                                         transform=transforms.Compose([Normalizer(), Augmenter(), Resizer([0,0])]))
         dataset_val = CocoDataset(parser.coco_path, set_name='val2017',
                                       transform=transforms.Compose([Normalizer(), Resizer([0,0])]))
+
+    sampler = AspectRatioBasedSampler(dataset_train, batch_size=1, drop_last=False)
+    dataloader_train = DataLoader(dataset_train, num_workers=1, collate_fn=collater, batch_sampler=sampler)
+                    
     sampler_val = AspectRatioBasedSampler(dataset_val, batch_size=1, drop_last=False)
     dataloader_val = DataLoader(dataset_val, num_workers=3, collate_fn=collater, batch_sampler=sampler_val)
     backbone = FractalNet(80, BasicBlock, BigBlock,True)
     model = FasterRCNN(backbone,num_classes=80)
     model = model.cuda()
     model = model.float()
+    '''
+    if torch.cuda.is_available():
+        model = torch.nn.DataParallel(model).cuda()
+    else:
+        model = torch.nn.DataParallel(model)
+    images = [torch.ones(3,255,255,dtype=torch.float).cuda(),torch.zeros(3,255,255,dtype=torch.float).cuda()]
+    targets = [{"boxes":torch.ones(1,4).cuda(),"labels":torch.ones(1,dtype=torch.int64).cuda()},{"boxes":torch.ones(1,4).cuda(),"labels":torch.ones(1,dtype=torch.int64).cuda()}]
+    torch.cuda.empty_cache()
+    for i in range(100):
+        output = model(images,targets)
+        print(output)
+    exit()
+    '''
+    for epoch_num in range(1):
+
+        model.train()
+        # cnn3.module.freeze_bn()
+
+        epoch_loss = []
+
+        for iter_num, data in enumerate(dataloader_train):
+            #images = [torch.tensor(i, dtype=torch.float).cuda() for i in data['img'].cuda().float()]
+            print(iter_num)
+            images = []
+            targets = []
+            for i in range(len(data["annot"])):
+                data["annot"][i]["labels"] = torch.tensor(data["annot"][i]["labels"],dtype=torch.int64)
+                d = {}
+                d["labels"] = data["annot"][i]["labels"].reshape((1,data["annot"][i]["labels"].shape[0]))[0].cuda()
+                d["boxes"] = torch.tensor(data["annot"][i]["boxes"],dtype=torch.float).cuda()
+                if d["boxes"].shape[0] != 0:
+                    targets.append(d)
+                    images.append(data['img'][i].cuda())
+            if targets == []:
+                continue
+            
+            if iter_num == 200:
+                break
+            output = model(images, targets)
+            print(output)
+            print("="*50)
+            del images,targets
+            torch.cuda.empty_cache()
+            loss_classifier  = output["loss_classifier"].cuda()
+            loss_box_reg     = output["loss_box_reg"].cuda()
+            loss_rpn_box_reg = output["loss_rpn_box_reg"].cuda()
+            loss_objectness  = output["loss_objectness"].cuda()
+            loss1 = loss_classifier + loss_box_reg + loss_rpn_box_reg + loss_objectness
+            
+            print("loss1:\t",loss1)
+            loss1.backward()
+            del loss1
+            torch.cuda.empty_cache()
     model.eval()
-    coco_eval.evaluate_coco(dataloader_val, model)
+    coco_eval.evaluate_coco(dataset_val, model)
 
     print(output) 
 

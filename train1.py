@@ -131,10 +131,6 @@ def main(args=None):
                 torch.save(d["labels"],"labels_"+str(i) + ".pt")
                 torch.save(d["boxes"],"boxes_" + str(i) + ".pt")
                 torch.save(data["img"][i],"img_"+str(i) + ".pt")
-                #print("labels:",d["labels"])
-                #print("-"*50)
-                #print("boxes: ",d["boxes"])
-                #print("-"*50)
                 if d["boxes"].shape[0] != 0:
                     targets.append(d)
                     images.append(data['img'][i].float().cuda())
@@ -143,8 +139,8 @@ def main(args=None):
             #if iter_num == 20:
             #    break
             output = cnn3(images, targets)
-            #print(output)
-            #print("="*50)
+            del images,targets
+            torch.cuda.empty_cache()
             loss_classifier  = output["loss_classifier"].cuda()
             loss_box_reg     = output["loss_box_reg"].cuda()
             loss_rpn_box_reg = output["loss_rpn_box_reg"].cuda()
@@ -152,6 +148,8 @@ def main(args=None):
             loss1 = loss_classifier + loss_box_reg
             loss2 = loss_rpn_box_reg + loss_objectness
             loss1.backward()
+            del loss1;del loss2
+            torch.cuda.empty_cache()
             #loss2.backward()
             #loss_classifier.backward()
             #loss_box_reg.backward()
